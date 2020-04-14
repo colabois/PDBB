@@ -71,5 +71,6 @@ data/*
 *.yml
 #*.json
 
-Pipfile.lock
 .env
+
+_build
