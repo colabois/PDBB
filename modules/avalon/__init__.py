@@ -25,7 +25,7 @@ class MainClass(BaseClassPython):
 
     def __init__(self, client):
         super().__init__(client)
-        self.config.init({"spectate_channel": 0,
+        self.config.set({"spectate_channel": 0,
                           "illustrations":{"merlin":"",
                                            "perceval":"",
                                            "gentil":"",
@@ -43,7 +43,7 @@ class MainClass(BaseClassPython):
                                       "oberon":0,
                                       "mechant":0,
                                       "test":15},
-                          "test":{"merlin":"",
+                         "test":{"merlin":"",
                                            "perceval":0,
                                            "gentil":0,
                                            "assassin":0,
@@ -52,5 +52,5 @@ class MainClass(BaseClassPython):
                                            "oberon":0,
                                            "mechant":0,
                                            "test":15}
-                          })
+                         })
 

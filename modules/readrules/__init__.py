@@ -13,7 +13,7 @@ class MainClass(BaseClassPython):
 
     def __init__(self, client):
         super().__init__(client)
-        self.config.init({"accepted_role": 0,
+        self.config.set({"accepted_role": 0,
                           "new_role": 0,
                           "listen_chan": 0,
                           "log_chan": 0,

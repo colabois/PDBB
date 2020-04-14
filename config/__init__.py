@@ -1,2 +1,3 @@
-from .Base import Config
-from .FileSystem import FSConfig
+from .base import Config
+
+__all__ = ["Config"]

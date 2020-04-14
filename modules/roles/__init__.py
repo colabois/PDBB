@@ -34,7 +34,7 @@ class MainClass(BaseClassPython):
 
     def __init__(self, client):
         super().__init__(client)
-        self.config.init({"roles": {}})
+        self.config.set({"roles": {}})
 
     async def com_list(self, message, args, kwargs):
         response = discord.Embed(title="Roles disponibles", color=self.config.color)

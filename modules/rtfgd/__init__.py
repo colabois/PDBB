@@ -16,7 +16,7 @@ class MainClass(BaseClassPython):
 
     def __init__(self, client):
         super().__init__(client)
-        self.config.init({"memes": []})
+        self.config.set({"memes": []})
 
     async def command(self, message, args, kwargs):
         await message.channel.send(

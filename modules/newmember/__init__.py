@@ -11,7 +11,7 @@ class MainClass(BaseClassPython):
 
     def __init__(self, client):
         super().__init__(client)
-        self.config.init({"new_role": 0,
+        self.config.set({"new_role": 0,
                           "motd": "Bienvenue !"})
 
     async def on_ready(self):

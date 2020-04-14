@@ -1,4 +1,6 @@
 #!/usr/bin/python3
+from __future__ import annotations
+
 import asyncio
 import importlib
 import json
@@ -12,7 +14,8 @@ import discord
 import humanize
 from packaging.version import Version
 
-from config.FileSystem import FSConfig
+from config import Config, config_types
+from config.config_types import factory
 from errors import IncompatibleModule
 from modules.base import base_supported_type
 
@@ -211,7 +214,7 @@ def event(func):
 
 setup_logging()
 
-log_discord = logging.getLogger('discord')
+log_discord = logging.getLogger('discord_types')
 log_LBI = logging.getLogger('LBI')
 log_communication = logging.getLogger('communication')
 
@@ -222,6 +225,7 @@ def load_modules_info():
 
 
 class LBI(discord.Client):
+    by_id: ClientById
     base_path = "data"
     debug = log_LBI.debug
     info = log_LBI.info
@@ -229,21 +233,35 @@ class LBI(discord.Client):
     error = log_LBI.error
     critical = log_LBI.critical
 
-    def __init__(self, config=None, *args, **kwargs):
+    def __init__(self, config: Config = None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if config is None:
-            config = FSConfig(path="data/config.toml")
+            config = Config(path="data/config.toml")
         self.reloading = False
-        self.id = ClientById(self)
+        self.by_id = ClientById(self)
         self.ready = False
         # Content: {"module_name": {"module": imported module, "class": initialized class}}
         self.modules = {}
+
         self.config = config
-        self.config.init(
-            {"modules": ["modules", "errors"], "prefix": "%", "admin_roles": [], "admin_users": [], "main_guild": 0,
-             "locale": "fr_FR.utf8"})
-        locale.setlocale(locale.LC_TIME, self.config.locale)
-        humanize.i18n.activate(self.config.locale)
+        self.config.register("modules", factory(config_types.List, factory(config_types.Str)))
+        self.config.register("prefix", factory(config_types.Str))
+        self.config.register("admin_roles", factory(config_types.List, factory(config_types.discord.Role, self)))
+        self.config.register("admin_users", factory(config_types.List, factory(config_types.discord.User, self)))
+        self.config.register("main_guild", factory(config_types.discord.Guild, self))
+        self.config.register("locale", factory(config_types.Str))
+
+        self.config.set({
+            "modules": ["modules", "errors"],
+            "prefix": "%",
+            "admin_roles": [],
+            "admin_users": [],
+            "main_guild": None,
+            "locale": "fr_FR.UTF8",
+        })
+
+        locale.setlocale(locale.LC_TIME, self.config['locale'])
+        humanize.i18n.activate(self.config['locale'])
         self.load_modules()
 
     @modules_edit
@@ -367,10 +385,10 @@ class ClientById:
         :param id_: Id of message to find
         :type id_: int
 
-        :raises discord.NotFound: This exception is raised when a message is not found (or not accessible by bot)
+        :raises discord_types.NotFound: This exception is raised when a message is not found (or not accessible by bot)
 
         :rtype: discord.Message
-        :return: discord.Message instance if message is found.
+        :return: discord_types.Message instance if message is found.
         """
         msg = None
         for channel in self.client.get_all_channels():
@@ -432,7 +450,6 @@ class ClientById:
         return None
 
 
-client1 = LBI(max_messages=500000)
 
 
 class Communication(asyncio.Protocol):
@@ -460,19 +477,20 @@ class Communication(asyncio.Protocol):
     def connection_lost(self, exc):
         print('%s: connection lost: %s' % (self.name, exc))
 
-
-communication = Communication(client1)
-
-
-async def start_bot():
-    await client1.start(os.environ.get("DISCORD_TOKEN"))
+if __name__ == "__main__":
+    client1 = LBI(max_messages=500000)
+    communication = Communication(client1)
 
 
-print(os.path.join("/tmp", os.path.dirname(os.path.realpath(__file__))) + ".sock")
+    async def start_bot():
+        await client1.start(os.environ.get("DISCORD_TOKEN"))
 
-loop = asyncio.get_event_loop()
-t = loop.create_unix_server(Communication,
-                            path=os.path.join("/tmp", os.path.dirname(os.path.realpath(__file__)) + ".sock"))
-loop.run_until_complete(t)
-loop.create_task(start_bot())
-loop.run_forever()
+
+    print(os.path.join("/tmp", os.path.dirname(os.path.realpath(__file__))) + ".sock")
+
+    loop = asyncio.get_event_loop()
+    t = loop.create_unix_server(Communication,
+                                path=os.path.join("/tmp", os.path.dirname(os.path.realpath(__file__)) + ".sock"))
+    loop.run_until_complete(t)
+    loop.create_task(start_bot())
+    loop.run_forever()

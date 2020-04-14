@@ -13,7 +13,7 @@ class MainClass(BaseClassPython):
     authorized_users = []
     authorized_roles = []
     help = {
-        "description": "Montre toutes les erreurs du bot dans discord.",
+        "description": "Montre toutes les erreurs du bot dans discord_types.",
         "commands": {
             "`{prefix}{command}`": "Renvoie une erreur de test.",
         }
@@ -21,7 +21,7 @@ class MainClass(BaseClassPython):
 
     def __init__(self, client):
         super().__init__(client)
-        self.config.init({"dev_chan": [], "memes": [""], "icon": ""})
+        self.config.set({"dev_chan": [], "memes": [""], "icon": ""})
         self.errorsList = None
 
     async def on_load(self):

@@ -5,7 +5,9 @@ import discord
 import humanize
 import matplotlib.pyplot as np
 
+import config
 import utils.emojis
+from config.config_types import factory
 from modules.base import BaseClassPython
 
 
@@ -24,7 +26,8 @@ class MainClass(BaseClassPython):
 
     def __init__(self, client):
         super().__init__(client)
-        self.config.init({"channel": 0, "lost_role": 0, "min_delta": datetime.timedelta(minutes=26).total_seconds()})
+        self.config.set({"channel": 0, "lost_role": 0, "min_delta": datetime.timedelta(minutes=26).total_seconds()})
+        self.config.register("channel", factory(config.config_types.Channel, self.client))
         self.history = {}
 
     async def on_message(self, message: discord.Message):

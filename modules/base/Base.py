@@ -29,8 +29,8 @@ class BaseClass:
         :type client: LBI"""
         self.client = client
         self.objects = Objects(path=os.path.join("data", self.name.lower()))
-        self.config = Config(parent=self.client.config, name="mod-" + self.name.lower())
-        self.config.init({"help_active": True, "color": 0x000000, "auth_everyone": False, "authorized_roles": [],
+        self.config = Config(path=os.path.join("data", self.name.lower(), "config.toml"))
+        self.config.set({"help_active": True, "color": 0x000000, "auth_everyone": False, "authorized_roles": [],
                           "authorized_users": [], "command_text": self.name.lower(), "configured": False})
 
     async def send_help(self, channel):
