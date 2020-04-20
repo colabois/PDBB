@@ -41,19 +41,21 @@ class BaseClass:
         self.config.register("command_text", factory(config_types.Str))
         self.config.register("configured", factory(config_types.Bool))
         self.config.set({"help_active": True, "color": 0x000000, "auth_everyone": False, "authorized_roles": [],
-                         "authorized_users": [], "command_text": self.name.lower(), "configured": False})
+                         "authorized_users": [], "command_text": self.name.lower(), "configured": True})
+        self.config.load(create=True)
 
     async def send_help(self, channel):
         embed = discord.Embed(
             title="[{nom}] - Aide".format(nom=self.name),
             description="*" + self.help["description"].format(prefix=self.client.config['prefix']) + "*",
-            color=self.config.color
+            color=self.config["color"]
         )
         for command, description in self.help["commands"].items():
-            embed.add_field(name=command.format(prefix=self.client.config['prefix'], command=self.config.command_text),
-                            value="-> " + description.format(prefix=self.client.config['prefix'],
-                                                             command=self.config.command_text),
-                            inline=False)
+            embed.add_field(
+                name=command.format(prefix=self.client.config['prefix'], command=self.config["command_text"]),
+                value="-> " + description.format(prefix=self.client.config['prefix'],
+                                                 command=self.config["command_text"]),
+                inline=False)
         await channel.send(embed=embed)
 
     def auth(self, user: discord.User, role_list: List[int] = None, user_list: List[int] = None,
@@ -70,14 +72,14 @@ class BaseClass:
         :type guild: Int
         :type user: discord.User
         """
-        if self.config.auth_everyone:
+        if self.config["auth_everyone"]:
             return True
         if user_list is None:
-            user_list = self.config.authorized_users + self.client.config.admin_users
+            user_list = self.config["authorized_users"] + self.client.config['admin_users']
         if user.id in user_list:
             return True
         if role_list is None:
-            role_list = self.config.authorized_roles + self.client.config.admin_roles
+            role_list = self.config["authorized_roles"] + self.client.config['admin_roles']
         if guild is None:
             guilds = self.client.guilds
         else:
@@ -95,7 +97,7 @@ class BaseClass:
 
         :param message: message to parse
         :type message: discord.Message"""
-        command = self.client.config["prefix"] + (self.config.command_text if self.config.command_text else "")
+        command = self.client.config["prefix"] + (self.config["command_text"] if self.config["command_text"] else "")
         if message.content.startswith(command):
             content = message.content.split(" ", 1)[1 if " " in message.content else 0]
             sub_command, args, kwargs = self._parse_command_content(content)

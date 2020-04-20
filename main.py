@@ -8,6 +8,7 @@ import locale
 import logging
 import logging.config
 import os
+import traceback
 from typing import Dict
 
 import discord
@@ -369,6 +370,7 @@ class LBI(discord.Client):
     # @async_event
     async def on_error(self, event_method, *args, **kwargs):
         # This event is special because it is call directly
+        self.error(traceback.format_exc())
         for module in self.modules.values():
             await module["initialized_class"].on_error(event_method, *args, **kwargs)
 

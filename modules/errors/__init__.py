@@ -72,21 +72,21 @@ class MainClass(BaseClassPython):
         embed = discord.Embed(
             title="[Erreur] Aïe :/",
             description="```python\n{0}```".format(traceback.format_exc()),
-            color=self.config.color)
-        embed.set_image(url=random.choice(self.config.memes))
+            color=self.config["color"])
+        embed.set_image(url=random.choice(self.config["memes"]))
         message_list = None
 
         # Send message to dev channels
-        for chanid in self.config.dev_chan:
+        for chanid in self.config["dev_chan"]:
             try:
                 await self.client.get_channel(chanid).send(
-                    embed=embed.set_footer(text="Ce message ne s'autodétruira pas.", icon_url=self.config.icon))
+                    embed=embed.set_footer(text="Ce message ne s'autodétruira pas.", icon_url=self.config["icon"]))
             except BaseException as e:
                 raise e
         # Send message to current channel if exists
         if channel is not None:
             message = await channel.send(embed=embed.set_footer(text="Ce message va s'autodétruire dans une minute",
-                                                                icon_url=self.config.icon))
+                                                                icon_url=self.config["icon"]))
             msg_id = {"channel_id": message.channel.id, "msg_id": message.id}
             self.errorsList.append(msg_id)
             # Save message in errorsList now to keep them if a reboot happend during next 60 seconds

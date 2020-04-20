@@ -87,7 +87,7 @@ class Config:
         with open(self.path, 'w') as file:
             toml.dump({k: v.to_save() for k, v in self.fields.items()}, file)
 
-    def load(self) -> None:
+    def load(self, create: bool = False) -> None:
         """
         Load config from ``self.file``
 
@@ -105,10 +105,14 @@ class Config:
         3
 
 
+        :param create: Create config file if not exists
         :return: None
         """
-        with open(self.path, 'r') as file:
-            self.set(toml.load(file))
+        try:
+            with open(self.path, 'r') as file:
+                self.set(toml.load(file))
+        except FileNotFoundError:
+            self.save()
 
     def __getitem__(self, item: str) -> Any:
         """
