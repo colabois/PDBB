@@ -5,7 +5,8 @@ from typing import List, Union, Optional
 
 import discord
 
-from config import Config
+from config import Config, config_types
+from config.config_types import factory
 from storage import Objects
 from utils import emojis
 
@@ -30,8 +31,17 @@ class BaseClass:
         self.client = client
         self.objects = Objects(path=os.path.join("data", self.name.lower()))
         self.config = Config(path=os.path.join("data", self.name.lower(), "config.toml"))
+        self.config.register("help_active", factory(config_types.Bool))
+        self.config.register("color", factory(config_types.Color))
+        self.config.register("auth_everyone", factory(config_types.Bool))
+        self.config.register("authorized_roles",
+                             factory(config_types.List, factory(config_types.discord_types.Role, client)))
+        self.config.register("authorized_users",
+                             factory(config_types.List, factory(config_types.discord_types.User, client)))
+        self.config.register("command_text", factory(config_types.Str))
+        self.config.register("configured", factory(config_types.Bool))
         self.config.set({"help_active": True, "color": 0x000000, "auth_everyone": False, "authorized_roles": [],
-                          "authorized_users": [], "command_text": self.name.lower(), "configured": False})
+                         "authorized_users": [], "command_text": self.name.lower(), "configured": False})
 
     async def send_help(self, channel):
         embed = discord.Embed(

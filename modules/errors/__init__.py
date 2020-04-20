@@ -5,6 +5,8 @@ import traceback
 import discord
 from discord import Message
 
+from config import config_types
+from config.config_types import factory
 from modules.base import BaseClassPython
 
 
@@ -21,6 +23,10 @@ class MainClass(BaseClassPython):
 
     def __init__(self, client):
         super().__init__(client)
+        self.config.register("dev_chan",
+                             factory(config_types.List, factory(config_types.discord_types.Channel, client)))
+        self.config.register("memes", factory(config_types.List, factory(config_types.Str)))
+        self.config.register("icon", factory(config_types.Str))
         self.config.set({"dev_chan": [], "memes": [""], "icon": ""})
         self.errorsList = None
 

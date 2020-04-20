@@ -2,34 +2,86 @@ from config.config_types.base_type import BaseType
 
 
 class Str(BaseType):
-    def __init__(self):
-        self.value = None
+    value: str
 
-    def check_value(self, value):
-        """Check if value is good"""
+    def __init__(self) -> None:
+        """
+        Base Str type for config
+
+        :Basic usage:
+
+        >>> Str()
+        <config_types.Str object with value "">
+        """
+
+        self.value = ""
+
+    def check_value(self, value: str) -> bool:
+        """
+        Check if value is usable as str
+
+        :Basic usage:
+
+        >>> my_str = Str()
+        >>> my_str.check_value("toto")
+        True
+        >>> my_str.check_value(45)
+        True
+
+        :param value: Value to test
+        :return: True if value is usable as str
+        """
         try:
             str(value)
         except ValueError:
             return False
         return True
 
-    def set(self, value):
-        """Check and set value"""
-        if self.check_value(value):
-            self.value = value
-            return
-        raise ValueError("Tentative de définir une valeur incompatible")
+    def set(self, value: str) -> None:
+        """
+        Set value of parameter
 
-    def get(self):
-        """Get value"""
+        :Basic usage:
+
+        >>> my_str = Str()
+        >>> my_str.set("e")
+        >>> my_str.set(34)
+
+        :raise ValueError: if attempt to set invalid value
+        :param value: Value to set
+        :return: None
+        """
+        if not self.check_value(value):
+            raise ValueError("Tentative de définir une valeur incompatible")
+        self.value = str(value)
+
+    def get(self) -> str:
+        """
+        Get value of parameter
+
+        :Basic usage:
+
+        >>> my_str = Str()
+        >>> my_str.set(34)
+        >>> print(my_str.get())
+        34
+        >>> my_str.set("Hey")
+        >>> print(my_str.get())
+        Hey
+
+        :return: Value of parameter
+        """
         return self.value
 
-    def to_save(self):
+    def to_save(self) -> str:
         """Build a serializable data to save"""
         return self.value
 
-    def load(self, value):
+    def load(self, value: str) -> None:
         """Fill with value"""
         if not self.check_value(value):
             raise ValueError("Tentative de charger une donnée incompatible.")
         self.value = value
+
+    def __repr__(self):
+        return f'<config_types.Str object with value "{self.value}">'

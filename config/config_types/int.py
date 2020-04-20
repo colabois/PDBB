@@ -21,15 +21,15 @@ class Int(BaseType):
         :Basic usage:
 
         >>> Int()
-        <Int object with value None>
+        <config_types.Int object with value None>
         >>> Int(min=0)
-        <Int object with value None, min=0 max=None>
+        <config_types.Int object with value None, min=0 max=None>
         >>> Int(max=0)
-        <Int object with value None, min=None max=0>
+        <config_types.Int object with value None, min=None max=0>
         >>> Int(min=10, max=20)
-        <Int object with value None, min=10 max=20>
+        <config_types.Int object with value None, min=10 max=20>
         >>> Int(values=[2, 3, 5, 7])
-        <Int object with value None, values=[2, 3, 5, 7]>
+        <config_types.Int object with value None, values=[2, 3, 5, 7]>
         >>> Int(min=0, values=[3, 4, 5]) # doctest: +IGNORE_EXCEPTION_DETAIL
         Traceback (most recent call last):
         ValueError: ...
@@ -91,7 +91,6 @@ class Int(BaseType):
             int(value)
         except ValueError:
             return False
-        # TODO: < ou <=? > ou >=?
         # Check min/max
         if self.min is not None and int(value) < self.min:
             return False
@@ -120,7 +119,7 @@ class Int(BaseType):
         """
         if not self.check_value(value):
             raise ValueError("Tentative de définir une valeur incompatible")
-        self.value = value
+        self.value = int(value)
 
     def get(self) -> Optional[int]:
         """
@@ -171,7 +170,7 @@ class Int(BaseType):
 
     def __repr__(self):
         if self.min is not None or self.max is not None:
-            return f'<Int object with value {self.value}, min={self.min} max={self.max}>'
+            return f'<config_types.Int object with value {self.value}, min={self.min} max={self.max}>'
         if self.values:
-            return f'<Int object with value {self.value}, values={self.values}>'
-        return f'<Int object with value {self.value}>'
+            return f'<config_types.Int object with value {self.value}, values={self.values}>'
+        return f'<config_types.Int object with value {self.value}>'

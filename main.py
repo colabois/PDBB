@@ -246,9 +246,9 @@ class LBI(discord.Client):
         self.config = config
         self.config.register("modules", factory(config_types.List, factory(config_types.Str)))
         self.config.register("prefix", factory(config_types.Str))
-        self.config.register("admin_roles", factory(config_types.List, factory(config_types.discord.Role, self)))
-        self.config.register("admin_users", factory(config_types.List, factory(config_types.discord.User, self)))
-        self.config.register("main_guild", factory(config_types.discord.Guild, self))
+        self.config.register("admin_roles", factory(config_types.List, factory(config_types.discord_types.Role, self)))
+        self.config.register("admin_users", factory(config_types.List, factory(config_types.discord_types.User, self)))
+        self.config.register("main_guild", factory(config_types.discord_types.Guild, self))
         self.config.register("locale", factory(config_types.Str))
 
         self.config.set({
@@ -361,7 +361,7 @@ class LBI(discord.Client):
         super().dispatch(event, *args, **kwargs)
         # Dispatch to modules
         for module in self.modules.values():
-            if module["initialized_class"].config.configured:
+            if module["initialized_class"].config["configured"]:
                 module["initialized_class"].dispatch(event, *args, **kwargs)
             else:
                 self.warning(f"Module {module['initialized_class'].name} is not configured.")
