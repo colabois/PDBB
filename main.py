@@ -8,6 +8,7 @@ import locale
 import logging
 import logging.config
 import os
+import sys
 import traceback
 from typing import Dict
 
@@ -493,6 +494,8 @@ if __name__ == "__main__":
     loop = asyncio.get_event_loop()
     t = loop.create_unix_server(Communication,
                                 path=os.path.join("/tmp", os.path.dirname(os.path.realpath(__file__)) + ".sock"))
-    loop.run_until_complete(t)
+    if not sys.platform == "win32":
+        loop.run_until_complete(t)
+    
     loop.create_task(start_bot())
     loop.run_forever()
