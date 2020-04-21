@@ -62,7 +62,14 @@ class BotBase(discord.Client):
     async def on_ready(self):
         self.info("Bot ready.")
 
-    def load_module(self, module):
+    def load_module(self, module: str) -> None:
+        """
+        Try to load module
+
+        :raise ModuleNotFoundError: If module is not in module folder
+        :raise IncompatibleModuleError: If module is incompatible
+        :param str module: module to load
+        """
         # Check if module exists
         if not os.path.isdir(os.path.join(self.config["modules_folder"], module)):
             raise ModuleNotFoundError(f"Module {module} not found in modules folder ({self.config['modules_folder']}.)")
@@ -100,7 +107,7 @@ class BotBase(discord.Client):
             raise IncompatibleModuleError(f"Module {module} mainclass ({main_class}) does not provide __dispatch__"
                                           f" attribute)")
         # Check if __dispatch__ is function
-        if not inspect.isfunction(dispatch):
+        if not inspect.isfunction(imported.__main_class__.__dispatch__):
             raise IncompatibleModuleError(f"Module {module} mainclass ({main_class}) provides __dispatch__, but it is "
                                           f"not a function ({dispatch}).")
         # Check if __dispatch__ can have variable positional and keyword aguments (to avoid future error on each event)
@@ -129,6 +136,12 @@ class BotBase(discord.Client):
                 "dispatch": dispatch,
             }
         })
+
+    def dispatch(self, event, *args, **kwargs):
+        """Dispatch event"""
+        super().dispatch(event, *args, **kwargs)
+        for module in self.modules.values():
+            module["dispatch"](event, *args, **kwargs)
 
     # Logging
     def info(self, *args, **kwargs):
