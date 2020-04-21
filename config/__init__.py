@@ -1,3 +1,3 @@
-from .base import Config
+from config.base import Config
 
 __all__ = ["Config"]

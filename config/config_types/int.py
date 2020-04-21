@@ -1,20 +1,20 @@
-from typing import Optional, List
+import typing
 
 from config.config_types.base_type import BaseType
 
 
 class Int(BaseType):
-    #: Max value for parameter
-    max: Optional[int]
-    #: Min value for parameter
-    min: Optional[int]
-    #: List of valid values for parameter
-    values: Optional[List[int]]
-    #: Current value of parameter
-    value: Optional[int]
+    #: :class:`typing.Optional` [:class:`int`]: Max value for parameter
+    max: typing.Optional[int]
+    #: :class:`typing.Optional` [:class:`int`]: Min value for parameter
+    min: typing.Optional[int]
+    #: :class:`typing.Optional` [:class:`typing.List` [:class:`int`]]: List of valid values for parameter
+    values: typing.Optional[typing.List[int]]
+    #: :class:`typing.Optional` [:class:`int`] Current value of parameter
+    value: typing.Optional[int]
 
-    def __init__(self, min: Optional[int] = None, max: Optional[int] = None,
-                 values: Optional[List[int]] = None) -> None:
+    def __init__(self, min: typing.Optional[int] = None, max: typing.Optional[int] = None,
+                 values: typing.Optional[typing.List[int]] = None) -> None:
         """
         Base Int type for config
 
@@ -35,9 +35,9 @@ class Int(BaseType):
         ValueError: ...
 
         :raise ValueError: If min and/or max are set when using values
-        :param min: Min value for this parameter
-        :param max: Max value for this parameter
-        :param values: This parameter can only be in one of these values (raise ValueError if min or max are set with values)
+        :param typing.Optional[int] min: Min value for this parameter
+        :param typing.Optional[int] max: Max value for this parameter
+        :param typing.Optional[typing.List[int]] values: This parameter can only be in one of these values (raise ValueError if min or max are set with values)
         """
         self.value = None
         if values is not None and (min is not None or max is not None):
@@ -84,8 +84,8 @@ class Int(BaseType):
         >>> prime.check_value(5)
         True
 
-        :param value: value to check
-        :return: True if value is correct
+        :param int value: value to check
+        :return bool: True if value is correct
         """
         try:
             int(value)
@@ -114,14 +114,13 @@ class Int(BaseType):
         ValueError: ...
 
         :raise ValueError: if attempt to set invalid value
-        :param value: Value to set
-        :return: None
+        :param int value: Value to set
         """
         if not self.check_value(value):
             raise ValueError("Tentative de définir une valeur incompatible")
         self.value = int(value)
 
-    def get(self) -> Optional[int]:
+    def get(self) -> typing.Optional[int]:
         """
         Get value of parameter
 
@@ -133,6 +132,7 @@ class Int(BaseType):
         34
 
         :return: Value of parameter
+        :rtype: Optional[int]
         """
         return self.value
 
@@ -149,6 +149,7 @@ class Int(BaseType):
         34
 
         :return: Current value
+        :rtype: int
         """
         return self.value
 
@@ -161,8 +162,7 @@ class Int(BaseType):
         >>> my_int.get()
         34
 
-        :param value: Value to load
-        :return: None
+        :param int value: Value to load
         """
         if not self.check_value(value):
             raise ValueError("Tentative de charger une donnée incompatible.")

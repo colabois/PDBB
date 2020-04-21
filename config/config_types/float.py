@@ -1,17 +1,17 @@
-from typing import Optional
+import typing
 
 from config.config_types.base_type import BaseType
 
 
 class Float(BaseType):
     #: Max value for parameter
-    max: Optional[float]
+    max: typing.Optional[float]
     #: Min value for parameter
-    min: Optional[float]
+    min: typing.Optional[float]
     #: Current value of parameter
-    value: Optional[float]
+    value: typing.Optional[float]
 
-    def __init__(self, min: Optional[float] = None, max: Optional[float] = None) -> None:
+    def __init__(self, min: typing.Optional[float] = None, max: typing.Optional[float] = None) -> None:
         """
         Base Float type for config
 
@@ -26,14 +26,14 @@ class Float(BaseType):
         >>> Float(min=10, max=20)
         <config_types.Float object with value None, min=10 max=20>
 
-        :param min: Minimal value for parameter
-        :param max: Maximal value for parameter
+        :param float min: Minimal value for parameter
+        :param float max: Maximal value for parameter
         """
         self.value = None
         self.min = min
         self.max = max
 
-    def check_value(self, value):
+    def check_value(self, value: float) -> bool:
         """
         Check if value is a correct int
 
@@ -67,8 +67,9 @@ class Float(BaseType):
         >>> ten_to_twenty.check_value(23.34)
         False
 
-        :param value: value to check
+        :param float value: value to check
         :return: True if value is correct
+        :rtype: bool
         """
         try:
             float(value)
@@ -81,7 +82,7 @@ class Float(BaseType):
             return False
         return True
 
-    def set(self, value):
+    def set(self, value: float) -> None:
         """
         Set value of parameter
 
@@ -94,14 +95,13 @@ class Float(BaseType):
         ValueError: ...
 
         :raise ValueError: if attempt to set invalid value
-        :param value: Value to set
-        :return: None
+        :param float value: Value to set
         """
         if not self.check_value(value):
             raise ValueError("Tentative de définir une valeur incompatible")
         self.value = float(value)
 
-    def get(self):
+    def get(self) -> float:
         """
         Get value of parameter
 
@@ -113,10 +113,11 @@ class Float(BaseType):
         -0.75
 
         :return: Value of parameter
+        :rtype: float
         """
         return self.value
 
-    def to_save(self):
+    def to_save(self) -> float:
         """
         Build a serializable object
 
@@ -129,10 +130,11 @@ class Float(BaseType):
         0.75
 
         :return: Current value
+        :rtype: float
         """
         return self.value
 
-    def load(self, value):
+    def load(self, value: float):
         """
         Load serialized value
 
@@ -141,8 +143,7 @@ class Float(BaseType):
         >>> my_float.get()
         0.75
 
-        :param value: Value to load
-        :return: None
+        :param float value: Value to load
         """
         if not self.check_value(value):
             raise ValueError("Tentative de charger une donnée incompatible.")

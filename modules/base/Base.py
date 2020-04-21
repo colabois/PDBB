@@ -39,10 +39,13 @@ class BaseClass:
         self.config.register("authorized_users",
                              factory(config_types.List, factory(config_types.discord_types.User, client)))
         self.config.register("command_text", factory(config_types.Str))
-        self.config.register("configured", factory(config_types.Bool))
-        self.config.set({"help_active": True, "color": 0x000000, "auth_everyone": False, "authorized_roles": [],
-                         "authorized_users": [], "command_text": self.name.lower(), "configured": True})
-        self.config.load(create=True)
+        self.config.set({"help_active": True,
+                         "color": 0x000000,
+                         "auth_everyone": False,
+                         "authorized_roles": [],
+                         "authorized_users": [],
+                         "command_text": self.name.lower()})
+        self.config.load()
 
     async def send_help(self, channel):
         embed = discord.Embed(

@@ -122,10 +122,9 @@ class Module:
         """
         return list of dependencies version
 
+        :raise IncompatibleModule: If bot_version is not properly formated (there must be min and max keys for each dependencies)
         :return: list of dependencies version
         :rtype: dict
-        :raises IncompatibleModule: If bot_version is not properly formated (there must be min and max keys for each
-        dependencies)
         """
         with open(os.path.join("modules", self.name, "version.json")) as file:
             versions = json.load(file)
@@ -231,13 +230,14 @@ class LBI(discord.Client):
     debug = log_LBI.debug
     info = log_LBI.info
     warning = log_LBI.warning
+    warn = warning
     error = log_LBI.error
     critical = log_LBI.critical
 
     def __init__(self, config: Config = None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if config is None:
-            config = Config(path="data/config.toml")
+            config = Config(path="data/config.toml", client=self)
         self.reloading = False
         self.by_id = ClientById(self)
         self.ready = False
@@ -362,13 +362,10 @@ class LBI(discord.Client):
         super().dispatch(event, *args, **kwargs)
         # Dispatch to modules
         for module in self.modules.values():
-            if module["initialized_class"].config["configured"]:
-                module["initialized_class"].dispatch(event, *args, **kwargs)
-            else:
-                self.warning(f"Module {module['initialized_class'].name} is not configured.")
+            module["initialized_class"].dispatch(event, *args, **kwargs)
 
-    # @async_event
     async def on_error(self, event_method, *args, **kwargs):
+        """Function called when error happend"""
         # This event is special because it is call directly
         self.error(traceback.format_exc())
         for module in self.modules.values():
@@ -401,12 +398,13 @@ class ClientById:
         if msg is None:
             raise discord.NotFound(None, "Message not found")
 
-    async def edit_message(self, id_, *args, **kwargs):
-        """Edit message by id_
+    async def edit_message(self, id, *args, **kwargs):
+        """
+        Edit message by id
 
-        :param id_: Id of the message to edit
-        :type id_: int"""
-        message = await self.fetch_message(id_)
+        :param id: Id of the message to edit
+        :type id: int"""
+        message = await self.fetch_message(id)
         return await message.edit(**kwargs)
 
     async def remove_reaction(self, id_message, *args, **kwargs):

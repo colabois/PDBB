@@ -1,16 +1,15 @@
 import typing
-from typing import Type
 
 from config.config_types.base_type import BaseType
 
 
 class List(BaseType):
-    #: Current list of value
+    #: :class:`typing.List` [:class:`BaseType`]: Current list of value
     values: typing.List[BaseType]
-    #: Type of values
-    type_: Type[BaseType]
+    #: :class:`typing.Type` [:class:`BaseType`]: Type of values
+    type_: typing.Type[BaseType]
 
-    def __init__(self, type_: Type[BaseType]) -> None:
+    def __init__(self, type_: typing.Type[BaseType]) -> None:
         """
         Base List type for config
 
@@ -22,7 +21,7 @@ class List(BaseType):
         >>> List(factory(Float))
         <config_types.List of <config_types.Float with parameters () {}> objects with values []>
 
-        :param type_: Type of items
+        :param typing.Type[BaseType] type_: Type of items
         """
         self.type_ = type_
         self.values = []
@@ -42,8 +41,9 @@ class List(BaseType):
         >>> my_list.check_value([345, 34, 23, 45, 34, 46, 35, 2345, 'rt'])
         False
 
-        :param value: Value to check
+        :param typing.List[typing.Any] value: Value to check
         :return: True if value is correct
+        :rtype: bool
         """
         new_object = self.type_()
         try:
@@ -67,8 +67,7 @@ class List(BaseType):
         ValueError: ...
         >>> my_list.set([45,])
 
-        :param value: Value to set
-        :return: None
+        :param typing.List[typing.Any] value: Value to set
         """
         if not self.check_value(value):
             raise ValueError('Tentative de définir une valeur incompatible')
@@ -93,6 +92,7 @@ class List(BaseType):
 
         :raise ValueError: If config is empty
         :return: Value of parameter
+        :rtype: typing.List[typing.Any]
         """
         return [v.get() for v in self.values]
 
@@ -111,6 +111,7 @@ class List(BaseType):
         [34]
 
         :return: Current value
+        :rtype: typing.List[typing.Any]
         """
         return [v.to_save() for v in self.values]
 
@@ -124,8 +125,7 @@ class List(BaseType):
         >>> my_list.get()
         [34]
 
-        :param value: Value to load
-        :return: None
+        :param typing.List[typing.Any] value: Value to load
         """
         if not self.check_value(value):
             raise ValueError("Tentative de charger une donnée incompatible.")

@@ -15,7 +15,7 @@ matplotlib = "*"
 humanize = "*"
 pytest = "*"
 sphinx = "*"
-sphinx-autodoc-typehints = "*"
+sphinx-rtd-theme = "*"
 
 [dev-packages]
 

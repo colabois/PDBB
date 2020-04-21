@@ -10,10 +10,21 @@ Module contents
     :undoc-members:
     :show-inheritance:
 
-Subpackages
------------
+Config types
+------------
 
-.. toctree::
-    :maxdepth: 4
+Base types
+^^^^^^^^^^
+.. automodule:: config.config_types
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
-    config.config_types
+
+Discord types
+^^^^^^^^^^^^^
+
+.. automodule:: config.config_types.discord_types
+    :members:
+    :undoc-members:
+    :show-inheritance:

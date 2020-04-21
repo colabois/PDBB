@@ -1,18 +1,18 @@
 from __future__ import annotations
 
-from typing import Dict, Type, Any, TYPE_CHECKING
+import typing
 
 import toml
 
-if TYPE_CHECKING:
-    from config.config_types.base_type import BaseType
+BaseType = typing.TypeVar("BaseType")
 
 
 class Config:
-    #: Path of config file
+    #: :class:`str`: Path of config file
     path: str
-    #: Current fields
-    fields: Dict[str, BaseType]
+
+    #: :class:`typing.Type` [:class:`BaseType`]: Current fields
+    fields: typing.Dict[str, BaseType]
 
     def __init__(self, path: str) -> None:
         """
@@ -22,15 +22,12 @@ class Config:
 
         >>> config = Config("doctest_config.toml")
 
-        :param path: Path of config file
-        :type path: str
-        :rtype: None
-        :rtype: None
+        :param str path: Path of config file
         """
         self.fields = {}
         self.path = path
 
-    def register(self, name: str, type_: Type[BaseType]) -> None:
+    def register(self, name: str, type_: typing.Type[BaseType]) -> None:
         """
         Register option
 
@@ -40,12 +37,8 @@ class Config:
         >>> config = Config("doctest_config.toml")
         >>> config.register("my_parameter", factory(Int))
 
-        :param name: Name of config parameter
-        :param type_: Type of config parameter
-        :type name: str
-        :type type_: Type[BaseType]
-        :return: None
-        :rtype: None
+        :param str name: Name of config parameter
+        :param typing.Type[BaseType] type_: Type of config parameter
         """
         self.fields.update({
             name: type_()
@@ -64,11 +57,13 @@ class Config:
 
         :type values: dict
         :param values: dict of parameters
-        :return: None
-        :rtype: None
         """
         for k, v in values.items():
-            self.fields[k].set(v)
+            try:
+                self.fields[k].set(v)
+            except KeyError:
+                # TODO: trouver un moyen de warn
+                pass
 
     def save(self) -> None:
         """
@@ -81,13 +76,11 @@ class Config:
         >>> config.register("my_parameter", factory(Int))
         >>> config.set({"my_parameter": 3})
         >>> config.save()
-
-        :return: None
         """
         with open(self.path, 'w') as file:
             toml.dump({k: v.to_save() for k, v in self.fields.items()}, file)
 
-    def load(self, create: bool = False) -> None:
+    def load(self) -> None:
         """
         Load config from ``self.file``
 
@@ -104,8 +97,6 @@ class Config:
         >>> new_config["my_parameter"]
         3
 
-
-        :param create: Create config file if not exists
         :return: None
         """
         try:
@@ -114,9 +105,11 @@ class Config:
         except FileNotFoundError:
             self.save()
 
-    def __getitem__(self, item: str) -> Any:
+    def __getitem__(self, item: str) -> typing.Any:
         """
-        Save config to ``self.file``
+        Get field from config
+
+        :param str item: Config field to get
 
         Basic usage:
 
@@ -126,7 +119,5 @@ class Config:
         >>> config.set({"my_parameter": 3})
         >>> print(config["my_parameter"])
         3
-
-        :return: None
         """
         return self.fields[item].get()

@@ -1,11 +1,11 @@
-from typing import Optional
+import typing
 
 from config.config_types.base_type import BaseType
 
 
 class Color(BaseType):
-    #: Current value
-    value: Optional[int]
+    #: :class:`typing.Optional` [:class:`int`]: Current value
+    value: typing.Optional[int]
 
     def __init__(self) -> None:
         """
@@ -40,8 +40,9 @@ class Color(BaseType):
         >>> my_color.check_value(0x1000000)
         False
 
-        :param value: value to check
+        :param int value: value to check
         :return: True if value is correct
+        :rtype: bool
         """
         try:
             int(value)
@@ -58,14 +59,13 @@ class Color(BaseType):
         >>> my_color = Color()
         >>> my_color.set(34)
 
-        :param value: Value to set
-        :return: None
+        :param int value: Value to set
         """
         if not self.check_value(value):
             raise ValueError("Tentative de définir une valeur incompatible")
         self.value = int(value)
 
-    def get(self) -> Optional[int]:
+    def get(self) -> typing.Optional[int]:
         """
         Get value of parameter
 
@@ -77,6 +77,7 @@ class Color(BaseType):
         34
 
         :return: Value of parameter
+        :rtype: typing.Optional[int]
         """
         return self.value
 
@@ -93,6 +94,7 @@ class Color(BaseType):
         34
 
         :return: Current value
+        :rtype: int
         """
         return self.value
 
@@ -105,8 +107,7 @@ class Color(BaseType):
         >>> my_color.get()
         True
 
-        :param value: Value to load
-        :return: None
+        :param int value: Value to load
         """
         if not self.check_value(value):
             raise ValueError("Tentative de charger une donnée incompatible.")

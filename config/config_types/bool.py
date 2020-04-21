@@ -1,11 +1,11 @@
-from typing import Optional
+import typing
 
 from config.config_types.base_type import BaseType
 
 
 class Bool(BaseType):
-    #: Current value of parameter
-    value: Optional[bool]
+    #: :class:`typing.Optional` [:class:`bool`]: Current value
+    value: typing.Optional[bool]
 
     def __init__(self) -> None:
         """
@@ -52,8 +52,9 @@ class Bool(BaseType):
         >>> my_bool.check_value(5)
         True
 
-        :param value: value to check
+        :param bool value: value to check
         :return: True if value is correct
+        :rtype: bool
         """
         try:
             bool(value)
@@ -70,14 +71,13 @@ class Bool(BaseType):
         >>> my_bool = Bool()
         >>> my_bool.set(34)
 
-        :param value: Value to set
-        :return: None
+        :param bool value: Value to set
         """
         if not self.check_value(value):
             raise ValueError("Tentative de définir une valeur incompatible")
         self.value = bool(value)
 
-    def get(self) -> Optional[int]:
+    def get(self) -> typing.Optional[bool]:
         """
         Get value of parameter
 
@@ -89,10 +89,11 @@ class Bool(BaseType):
         True
 
         :return: Value of parameter
+        :rtype: typing.Optional[bool]
         """
         return self.value
 
-    def to_save(self) -> int:
+    def to_save(self) -> bool:
         """
         Build a serializable object
 
@@ -105,6 +106,7 @@ class Bool(BaseType):
         True
 
         :return: Current value
+        :rtype: bool
         """
         return self.value
 
@@ -117,8 +119,7 @@ class Bool(BaseType):
         >>> my_bool.get()
         True
 
-        :param value: Value to load
-        :return: None
+        :param bool value: Value to load
         """
         if not self.check_value(value):
             raise ValueError("Tentative de charger une donnée incompatible.")
