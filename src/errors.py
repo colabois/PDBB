@@ -6,7 +6,7 @@ class ModuleException(BotBaseException):
     pass
 
 
-class ModuleNotFound(ModuleException):
+class ModuleNotFoundError(ModuleException):
     pass
 
 
