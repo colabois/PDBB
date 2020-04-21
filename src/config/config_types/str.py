@@ -1,4 +1,4 @@
-from config.config_types.base_type import BaseType
+from .base_type import BaseType
 
 
 class Str(BaseType):

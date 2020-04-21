@@ -1,6 +1,6 @@
 import typing
 
-from config.config_types.base_type import BaseType
+from .base_type import BaseType
 
 
 class Color(BaseType):

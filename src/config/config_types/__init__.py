@@ -1,16 +1,16 @@
 from typing import Type
 
-import config.config_types.discord_types
-from config.config_types.base_type import BaseType
-from config.config_types.bool import Bool
-from config.config_types.color import Color
-from config.config_types.dict import Dict
-from config.config_types.float import Float
-from config.config_types.int import Int
-from config.config_types.list import List
-from config.config_types.str import Str
+from . import discord_types
+from .base_type import BaseType
+from .bool import Bool
+from .color import Color
+from .dict import Dict
+from .float import Float
+from .int import Int
+from .list import List
+from .str import Str
 
-__all__ = ['factory', "BaseType", 'Dict', 'Float', 'Int', 'List', 'Str', 'discord_types', 'Bool', 'Color']
+__all__ = ['factory', 'Dict', 'Float', 'Int', 'List', 'Str', 'discord_types', 'Bool', 'Color']
 
 
 class Meta(type):
@@ -32,7 +32,7 @@ def factory(type: Type[BaseType], *args, **kwargs):
     >>> factory(Int, min=0, max=10)
     <config_types.Int with parameters () {'min': 0, 'max': 10}>
 
-    :param type: Type to create
+    :param Type[BaseType] type: Type to create
     :return: New type
     """
 

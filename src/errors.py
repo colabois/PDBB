@@ -1,28 +1,14 @@
-class LBIException(Exception):
-    """
-    Base exception class for LBI
-
-    All other exceptions are subclasses
-    """
+class BotBaseException(Exception):
     pass
 
 
-class ModuleException(LBIException):
-    """
-    Base exception class for all module errors
-    """
+class ModuleException(BotBaseException):
     pass
 
 
-class ModuleNotInstalled(ModuleException):
-    """
-    Raised when a module is not found in module directory
-    """
+class ModuleNotFound(ModuleException):
     pass
 
 
-class IncompatibleModule(ModuleException):
-    """
-    Raised when a module is not compatible with bot version
-    """
+class IncompatibleModuleError(ModuleException):
     pass

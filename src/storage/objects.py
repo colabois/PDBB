@@ -1,7 +1,7 @@
 import json
 import os
 
-from storage import jsonencoder
+from . import jsonencoder
 
 
 class Objects:

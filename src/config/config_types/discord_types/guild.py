@@ -6,22 +6,23 @@ import discord
 
 from config.config_types.base_type import BaseType
 
-LBI = typing.TypeVar('LBI')
+if typing.TYPE_CHECKING:
+    from bot_base import BotBase
 
 
 class Guild(BaseType):
-    #: :class:`LBI`: Client instance for checking
-    client: LBI
+    #: :class:`BotBase`: Client instance for checking
+    client: BotBase
     #: :class:`typing.Optional` [:class:`int`]: Current guild id
     value: typing.Optional[int]
     #: :class:`typing.Optional` [:class:`discord.Guild`]: Current guild instance
     guild_instance: typing.Optional[discord.Guild]
 
-    def __init__(self, client: LBI) -> None:
+    def __init__(self, client: BotBase) -> None:
         """
         Base Guild type for config.
 
-        :param LBI client: Client instance
+        :param BotBase client: Client instance
 
         :Basic usage:
 
@@ -55,7 +56,7 @@ class Guild(BaseType):
         if isinstance(value, discord.Guild):
             id = value.id
         if not self.client.is_ready():
-            self.client.warn("No check for guild `value` because client is not initialized!")
+            self.client.warning("No check for guild `value` because client is not initialized!")
             return True
         if self.client.get_guild(id):
             return True
