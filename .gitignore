@@ -73,5 +73,6 @@ data/*
 
 .env
 
-_build
+/doc/build
 /src/datas/
+/src/doctest_config.toml
