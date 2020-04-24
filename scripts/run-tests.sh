@@ -4,10 +4,12 @@
 set -e
 
 
-cd "${0%/*}/.."
+cd "${0%/*}/../src"
 
 
 echo "Running tests"
 # Run test and ignore warnings
 pipenv run pytest -p no:warnings
+
+cd "../"
 
