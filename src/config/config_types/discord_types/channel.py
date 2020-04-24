@@ -11,16 +11,48 @@ if typing.TYPE_CHECKING:
 
 
 class Channel(BaseType):
+    #: :class:`BotBase`: Client instance for checking
     client: BotBase
+    #: :class:`typing.Optional` [:class:`int`]: Current channel id
+    value: int
+    #: :class:`typing.Optional` [:class:`discord.TextChannel`]: Current guild instance
+    channel_instance: typing.Optional[discord.TextChannel]
 
     def __init__(self, client):
+        """
+        Base Channel type for config.
+
+        :param BotBase client: Client instance
+
+        :Basic usage:
+
+        >>> Channel(client) #doctest: +SKIP
+        <config_types.discord_type.Channel object with value None>
+        """
         self.value = 0
         self.channel_instance = None
         self.client = client
 
-    def check_value(self, value):
+    def check_value(self, value: typing.Union[int, discord.TextChannel]) -> bool:
+        """
+        Check if value is correct
+
+        If bot is not connected, always True
+
+        :Basic usage:
+
+        >>> my_channel = Channel(client) #doctest: +SKIP
+        >>> my_channel.check_value(invalid_id_or_channel) #doctest: +SKIP
+        False
+        >>> my_channel.check_value(valid_id_or_channel) #doctest: +SKIP
+        True
+
+        :param value: Value to test
+        :type value: Union[int, discord.TextChannel]
+        :return: True if guild exists
+        """
         id = value
-        if isinstance(value, discord.Guild):
+        if isinstance(value, discord.TextChannel):
             id = value.id
         if not self.client.is_ready():
             self.client.warning(f"No check for channel {value} because client is not initialized!")
@@ -30,21 +62,83 @@ class Channel(BaseType):
         return True
 
     def set(self, value):
+        """
+        Set value of parameter
+
+        :Basic usage:
+
+        >>> my_channel = Channel(client) #doctest: +SKIP
+        >>> my_channel.set(valid_id_or_channel) #doctest: +SKIP
+        >>> my_channel.set(invalid_id_or_channel) #doctest: +SKIP +IGNORE_EXCEPTION_DETAIL
+        Traceback (most recent call last):
+        ValueError: ...
+
+        :raise ValueError: if attempt to set invalid value
+        :param value: value to set
+        :type value: Union[int, discord.TextChannel]
+        """
         if not self.check_value(value):
             raise ValueError("Attempt to set incompatible value.")
+        if isinstance(value, discord.TextChannel):
+            value = value.id
         self.value = value
         self._update()
 
     def get(self):
+        """
+        Get value of parameter
+
+        :Basic usage:
+
+        >>> my_channel = Channel(client) #doctest: +SKIP
+        >>> my_channel.set(valid_id_or_channel) #doctest: +SKIP
+        >>> my_channel.get() #doctest: +SKIP
+        <discord.guild.Guild at 0x...>
+
+        If client is not connected:
+        >>> my_channel = Channel(client) #doctest: +SKIP
+        >>> my_channel.set(valid_id_or_channel) #doctest: +SKIP
+        >>> my_channel.get() #doctest: +SKIP
+        23411424132412
+
+        :return: Guild object if client is connected, else id
+        :rtype: Union[int, discord.Guild]
+        """
         if self.channel_instance is None:
             self._update()
         return self.channel_instance or self.value
 
     def to_save(self):
+        """
+        Return id of channel
+
+        :Basic usage:
+        >>> my_channel = Channel(client) #doctest: +SKIP
+        >>> my_channel.set(valid_id_or_channel) #doctest: +SKIP
+        >>> my_channel.to_save() #doctest: +SKIP
+        123412412421
+
+        :return: Current id
+        :rtype: Optional[int]
+        """
         return self.value or 0
 
     def load(self, value):
+        """
+        Load value from config
 
+        :Basic usage:
+
+        >>> my_channel = Channel(client) #doctest: +SKIP
+        >>> my_channel.set(valid_id) #doctest: +SKIP
+        >>> my_channel.set(invalid_id) #doctest: +SKIP +IGNORE_EXCEPTION_DETAIL
+        Traceback (most recent call last):
+        ValueError: ...
+
+        :raise ValueError: if attempt to set invalid value
+        :param value: value to set
+        :type value: Union[int, discord.TextChannel]
+        """
         if self.check_value(value):
             raise ValueError("Attempt to load incompatible value.")
         self.set(value)

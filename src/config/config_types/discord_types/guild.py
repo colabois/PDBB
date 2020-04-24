@@ -80,6 +80,8 @@ class Guild(BaseType):
         """
         if not self.check_value(value):
             raise ValueError("Attempt to set incompatible value.")
+        if isinstance(value, discord.Guild):
+            value = value.id
         self.value = value
         self._update()
 
