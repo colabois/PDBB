@@ -98,7 +98,7 @@ class Float(BaseType):
         :param float value: Value to set
         """
         if not self.check_value(value):
-            raise ValueError("Tentative de définir une valeur incompatible")
+            raise ValueError("Attempt to set incompatible value.")
         self.value = float(value)
 
     def get(self) -> float:
@@ -146,7 +146,7 @@ class Float(BaseType):
         :param float value: Value to load
         """
         if not self.check_value(value):
-            raise ValueError("Tentative de charger une donnée incompatible.")
+            raise ValueError("Attempt to load incompatible value.")
         self.value = value
 
     def __repr__(self):

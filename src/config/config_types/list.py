@@ -70,7 +70,7 @@ class List(BaseType):
         :param typing.List[typing.Any] value: Value to set
         """
         if not self.check_value(value):
-            raise ValueError('Tentative de définir une valeur incompatible')
+            raise ValueError('Attempt to set incompatible value.')
         new_liste = []
         for v in value:
             new_element = self.type_()
@@ -128,7 +128,7 @@ class List(BaseType):
         :param typing.List[typing.Any] value: Value to load
         """
         if not self.check_value(value):
-            raise ValueError("Tentative de charger une donnée incompatible.")
+            raise ValueError("Attempt to load incompatible value.")
         for v in value:
             new_object = self.type_()
             new_object.load(v)

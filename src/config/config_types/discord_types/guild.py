@@ -79,7 +79,7 @@ class Guild(BaseType):
         :type value: Union[int, discord.Guild]
         """
         if not self.check_value(value):
-            raise ValueError("Tentative de définir une valeur incompatible")
+            raise ValueError("Attempt to set incompatible value.")
         self.value = value
         self._update()
 
@@ -138,7 +138,7 @@ class Guild(BaseType):
         :type value: Union[int, discord.Guild]
         """
         if self.check_value(value):
-            raise ValueError("Tentative de charger une donnée incompatible.")
+            raise ValueError("Attempt to load incompatible value.")
         self.set(value)
         self._update()
 

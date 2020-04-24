@@ -31,7 +31,7 @@ class Channel(BaseType):
 
     def set(self, value):
         if not self.check_value(value):
-            raise ValueError("Tentative de définir une valeur incompatible")
+            raise ValueError("Attempt to set incompatible value.")
         self.value = value
         self._update()
 
@@ -46,7 +46,7 @@ class Channel(BaseType):
     def load(self, value):
 
         if self.check_value(value):
-            raise ValueError("Tentative de charger une donnée incompatible.")
+            raise ValueError("Attempt to load incompatible value.")
         self.set(value)
         self._update()
 

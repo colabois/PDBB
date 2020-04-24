@@ -52,7 +52,7 @@ class Str(BaseType):
         :return: None
         """
         if not self.check_value(value):
-            raise ValueError("Tentative de définir une valeur incompatible")
+            raise ValueError("Attempt to set incompatible value.")
         self.value = str(value)
 
     def get(self) -> str:
@@ -103,7 +103,7 @@ class Str(BaseType):
         '34'
         """
         if not self.check_value(value):
-            raise ValueError("Tentative de charger une donnée incompatible.")
+            raise ValueError("Attempt to load incompatible value.")
         self.value = value
 
     def __repr__(self):

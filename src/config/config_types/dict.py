@@ -76,7 +76,7 @@ class Dict(BaseType):
         """
         new_dict = dict()
         if not self.check_value(value):
-            raise ValueError("Tentative de définir une valeur incompatible")
+            raise ValueError("Attempt to set incompatible value.")
         for k, v in value.items():
             new_key = self.type_key()
             new_key.set(k)

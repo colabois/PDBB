@@ -22,7 +22,7 @@ class User(BaseType):
         if self.check_value(value):
             self.value = value
             return
-        raise ValueError("Tentative de définir une valeur incompatible")
+        raise ValueError("Attempt to set incompatible value.")
 
     def get(self):
         return self.value
@@ -32,5 +32,5 @@ class User(BaseType):
 
     def load(self, value):
         if self.check_value(value):
-            raise ValueError("Tentative de charger une donnée incompatible.")
+            raise ValueError("Attempt to load incompatible value.")
         self.value = value

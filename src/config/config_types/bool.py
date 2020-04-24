@@ -22,8 +22,6 @@ class Bool(BaseType):
         """
         Check if value is a correct bool
 
-        Check if value is int, and if applicable, between ``min`` and ``max`` or in ``values``
-
         :Basic usage:
 
         >>> my_bool = Bool()
@@ -74,7 +72,7 @@ class Bool(BaseType):
         :param bool value: Value to set
         """
         if not self.check_value(value):
-            raise ValueError("Tentative de définir une valeur incompatible")
+            raise ValueError("Attempt to set incompatible value.")
         self.value = bool(value)
 
     def get(self) -> typing.Optional[bool]:
@@ -122,7 +120,7 @@ class Bool(BaseType):
         :param bool value: Value to load
         """
         if not self.check_value(value):
-            raise ValueError("Tentative de charger une donnée incompatible.")
+            raise ValueError("Attempt to load incompatible value.")
         self.value = value
 
     def __repr__(self):
