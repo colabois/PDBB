@@ -5,6 +5,7 @@ import inspect
 import logging
 import os
 import sys
+import traceback
 
 import discord
 import toml
@@ -85,7 +86,8 @@ class BotBase(discord.Client):
         # Check if module exists
         if not os.path.isdir(os.path.join(self.config["modules_folder"], module)):
             self.warning(f"Attempt to load unknown module {module}.")
-            raise errors.ModuleNotFoundError(f"Module {module} not found in modules folder ({self.config['modules_folder']}.)")
+            raise errors.ModuleNotFoundError(
+                f"Module {module} not found in modules folder ({self.config['modules_folder']}.)")
         if not os.path.isfile(os.path.join(self.config["modules_folder"], module, "infos.toml")):
             self.warning(f"Attempt to load incompatible module {module}: no infos.toml found")
             raise errors.IncompatibleModuleError(f"Module {module} is incompatible: no infos.toml found.")
@@ -102,7 +104,7 @@ class BotBase(discord.Client):
             self.warning(f"Attempt to load incompatible module {module}: need bot version {infos['bot_version']} "
                          f"and you have {__version__}")
             raise errors.IncompatibleModuleError(f"Module {module} is not compatible with your current bot version "
-                                          f"(need {infos['bot_version']} and you have {__version__}).")
+                                                 f"(need {infos['bot_version']} and you have {__version__}).")
         # Check dependencies
         if infos.get("dependencies"):
             for dep, version in infos["dependencies"].items():
@@ -113,13 +115,17 @@ class BotBase(discord.Client):
                     self.warning(f"Attempt to load incompatible module {module}: (require {dep} ({version}) "
                                  f"and you have {dep} ({self.modules[dep]['infos']['version']})")
                     raise errors.IncompatibleModuleError(f"Module {module} is not compatible with your current install "
-                                                  f"(require {dep} ({version}) and you have {dep} "
-                                                  f"({self.modules[dep]['infos']['version']})")
+                                                         f"(require {dep} ({version}) and you have {dep} "
+                                                         f"({self.modules[dep]['infos']['version']})")
 
         # Check if module is meta
         if infos.get("metamodule", False) == False:
             # Check if module have __main_class__
-            imported = importlib.import_module(module)
+            try:
+                imported = importlib.import_module(module)
+            except Exception as e:
+                self.warning(f"Attempt to load incompatible module {module}: failed import")
+                raise e
             try:
                 main_class = imported.__main_class__
             except AttributeError:
@@ -139,8 +145,9 @@ class BotBase(discord.Client):
                 dispatch = main_class.__dispatch__
             except AttributeError:
                 self.warning(f"Attempt to load incompatible module {module}: __dispatch_ not found")
-                raise errors.IncompatibleModuleError(f"Module {module} mainclass ({main_class}) does not provide __dispatch__"
-                                              f" attribute)")
+                raise errors.IncompatibleModuleError(
+                    f"Module {module} mainclass ({main_class}) does not provide __dispatch__"
+                    f" attribute)")
             # Check if __dispatch__ is function
             if not inspect.isfunction(imported.__main_class__.__dispatch__):
                 self.warning(f"Attempt to load incompatible module {module}: __dispatch__ is not a function")
@@ -178,7 +185,7 @@ class BotBase(discord.Client):
                     "dispatch": dispatch,
                 }
             })
-        else: # Module is metamodule
+        else:  # Module is metamodule
             self.info(f"Add modules {module} to current modules")
             self.modules.update({
                 module: {
@@ -196,16 +203,19 @@ class BotBase(discord.Client):
         for module in self.modules.values():
             module["dispatch"](event, *args, **kwargs)
 
+    async def on_error(self, event_method, exc, *args, **kwargs):
+        self.error(f"Error in {event_method}: \n{exc}")
+
     # Logging
     def info(self, *args, **kwargs):
         if self.log:
             self.log.info(*args, **kwargs)
         self.dispatch("log_info", *args, **kwargs)
 
-    def error(self, *args, **kwargs):
+    def error(self, e, *args, **kwargs):
         if self.log:
-            self.log.error(*args, **kwargs)
-        self.dispatch("log_error", *args, **kwargs)
+            self.log.error(e, *args, **kwargs)
+        self.dispatch("log_error", e, *args, **kwargs)
 
     def warning(self, *args, **kwargs):
         if self.log:

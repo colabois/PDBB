@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import typing
 
 import toml
@@ -75,8 +76,9 @@ class Config:
         >>> config = Config("doctest_config.toml")
         >>> config.register("my_parameter", factory(Int))
         >>> config.set({"my_parameter": 3})
-        >>> config.save()
+        >>> config.save() #doctest: +SKIP
         """
+        os.makedirs(os.path.dirname(self.path), exist_ok=True)
         with open(self.path, 'w') as file:
             toml.dump({k: v.to_save() for k, v in self.fields.items()}, file)
 
@@ -90,11 +92,11 @@ class Config:
         >>> config = Config("doctest_config.toml")
         >>> config.register("my_parameter", factory(Int))
         >>> config.set({"my_parameter": 3})
-        >>> config.save()
+        >>> config.save() #doctest: +SKIP
         >>> new_config = Config("doctest_config.toml")
         >>> new_config.register("my_parameter", factory(Int))
-        >>> new_config.load()
-        >>> new_config["my_parameter"]
+        >>> new_config.load() #doctest: +SKIP
+        >>> new_config["my_parameter"] #doctest: +SKIP
         3
 
         :return: None
@@ -103,7 +105,8 @@ class Config:
             with open(self.path, 'r') as file:
                 self.set(toml.load(file))
         except FileNotFoundError:
-            self.save()
+            pass
+        self.save()
 
     def __getitem__(self, item: str) -> typing.Any:
         """

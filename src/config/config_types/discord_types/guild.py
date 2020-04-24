@@ -29,7 +29,7 @@ class Guild(BaseType):
         >>> Guild(client) #doctest: +SKIP
         <config_types.discord_type.Guild object with value None>
         """
-        self.value = None
+        self.value = 0
         self.guild_instance = None
         self.client = client
 
@@ -56,7 +56,7 @@ class Guild(BaseType):
         if isinstance(value, discord.Guild):
             id = value.id
         if not self.client.is_ready():
-            self.client.warning("No check for guild `value` because client is not initialized!")
+            self.client.warning(f"No check for guild {value} because client is not initialized!")
             return True
         if self.client.get_guild(id):
             return True
@@ -119,7 +119,7 @@ class Guild(BaseType):
         :return: Current id
         :rtype: Optional[int]
         """
-        return self.value
+        return self.value or 0
 
     def load(self, value):
         """
@@ -140,6 +140,7 @@ class Guild(BaseType):
         if self.check_value(value):
             raise ValueError("Tentative de charger une donnée incompatible.")
         self.set(value)
+        self._update()
 
     def __repr__(self):
         return f'<config_types.discord_types.guild object with value {self.value}>'
