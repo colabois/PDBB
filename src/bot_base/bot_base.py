@@ -217,7 +217,7 @@ class BotBase(discord.Client):
             self.log.error(e, *args, **kwargs)
         self.dispatch("log_error", e, *args, **kwargs)
 
-    def warning(self, *args, **kwargs):
+    def warning(self, warning, *args, **kwargs):
         if self.log:
-            self.log.warning(*args, **kwargs)
-        self.dispatch("log_warning", *args, **kwargs)
+            self.log.warning(warning, *args, **kwargs)
+        self.dispatch("log_warning", warning, *args, **kwargs)
