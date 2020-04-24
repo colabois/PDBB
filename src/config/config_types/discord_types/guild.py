@@ -62,7 +62,7 @@ class Guild(BaseType):
             return True
         return True
 
-    def set(self, value: typing.Union[int, discord.Guild]):
+    def set(self, value: typing.Union[int, discord.Guild]) -> None:
         """
         Set value of parameter
 
@@ -108,7 +108,7 @@ class Guild(BaseType):
         self._update()
         return self.guild_instance or self.value
 
-    def to_save(self) -> typing.Optional:
+    def to_save(self) -> int:
         """
         Return id of guild
 
@@ -119,11 +119,11 @@ class Guild(BaseType):
         123412412421
 
         :return: Current id
-        :rtype: Optional[int]
+        :rtype: int
         """
         return self.value or 0
 
-    def load(self, value):
+    def load(self, value: typing.Union[int, discord.Guild]) -> None:
         """
         Load value from config
 
@@ -145,7 +145,7 @@ class Guild(BaseType):
         self._update()
 
     def __repr__(self):
-        return f'<config_types.discord_types.guild object with value {self.value}>'
+        return f'<config_types.discord_types.Guild object with value {self.value}>'
 
     def _update(self):
         if self.client.is_ready() and self.guild_instance is None:

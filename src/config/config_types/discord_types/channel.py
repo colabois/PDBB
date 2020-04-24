@@ -18,7 +18,7 @@ class Channel(BaseType):
     #: :class:`typing.Optional` [:class:`discord.TextChannel`]: Current guild instance
     channel_instance: typing.Optional[discord.TextChannel]
 
-    def __init__(self, client):
+    def __init__(self, client: BotBase) -> None:
         """
         Base Channel type for config.
 
@@ -61,7 +61,7 @@ class Channel(BaseType):
             return True
         return True
 
-    def set(self, value):
+    def set(self, value: typing.Union[int, discord.TextChannel]):
         """
         Set value of parameter
 
@@ -84,7 +84,7 @@ class Channel(BaseType):
         self.value = value
         self._update()
 
-    def get(self):
+    def get(self) -> typing.Union[int, discord.Channel]:
         """
         Get value of parameter
 
@@ -101,14 +101,14 @@ class Channel(BaseType):
         >>> my_channel.get() #doctest: +SKIP
         23411424132412
 
-        :return: Guild object if client is connected, else id
-        :rtype: Union[int, discord.Guild]
+        :return: Channel object if client is connected, else id
+        :rtype: Union[int, discord.Channel]
         """
         if self.channel_instance is None:
             self._update()
         return self.channel_instance or self.value
 
-    def to_save(self):
+    def to_save(self) -> int:
         """
         Return id of channel
 
@@ -119,11 +119,11 @@ class Channel(BaseType):
         123412412421
 
         :return: Current id
-        :rtype: Optional[int]
+        :rtype: int
         """
         return self.value or 0
 
-    def load(self, value):
+    def load(self, value: typing.Union[int, discord.Channel]) -> None:
         """
         Load value from config
 
@@ -150,3 +150,5 @@ class Channel(BaseType):
         else:
             self.channel_instance = None
 
+    def __repr__(self):
+        return f'<config_types.discord_types.Channel object with value {self.value}>'
