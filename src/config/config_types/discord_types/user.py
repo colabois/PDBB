@@ -1,15 +1,15 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+import typing
 
 from config.config_types.base_type import BaseType
 
-if TYPE_CHECKING:
-    from main import LBI
+if typing.TYPE_CHECKING:
+    from bot_base import BotBase
 
 class User(BaseType):
 
-    client: LBI
+    client: BotBase
 
     def __init__(self, client):
         self.value = None

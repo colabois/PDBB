@@ -7,7 +7,7 @@ import os
 from bot_base.bot_base import BotBase
 
 
-def setup_logging(default_path='data/log_config.json', default_level=logging.INFO, env_key='LBI_LOG_CONFIG'):
+def setup_logging(default_path='data/log_config.json', default_level=logging.INFO, env_key='BOT_BASE_LOG_CONFIG'):
     """Setup logging configuration
     """
     path = default_path
