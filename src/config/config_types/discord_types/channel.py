@@ -15,7 +15,7 @@ class Channel(BaseType):
     client: BotBase
     #: :class:`typing.Optional` [:class:`int`]: Current channel id
     value: int
-    #: :class:`typing.Optional` [:class:`discord.TextChannel`]: Current guild instance
+    #: :class:`typing.Optional` [:class:`discord.TextChannel`]: Current channel instance
     channel_instance: typing.Optional[discord.TextChannel]
 
     def __init__(self, client: BotBase) -> None:
@@ -49,7 +49,7 @@ class Channel(BaseType):
 
         :param value: Value to test
         :type value: Union[int, discord.TextChannel]
-        :return: True if guild exists
+        :return: True if channel exists
         """
         id = value
         if isinstance(value, discord.TextChannel):
@@ -93,7 +93,7 @@ class Channel(BaseType):
         >>> my_channel = Channel(client) #doctest: +SKIP
         >>> my_channel.set(valid_id_or_channel) #doctest: +SKIP
         >>> my_channel.get() #doctest: +SKIP
-        <discord.guild.Guild at 0x...>
+        <discord.channel.TextChannel at 0x...>
 
         If client is not connected:
         >>> my_channel = Channel(client) #doctest: +SKIP
@@ -113,6 +113,7 @@ class Channel(BaseType):
         Return id of channel
 
         :Basic usage:
+
         >>> my_channel = Channel(client) #doctest: +SKIP
         >>> my_channel.set(valid_id_or_channel) #doctest: +SKIP
         >>> my_channel.to_save() #doctest: +SKIP

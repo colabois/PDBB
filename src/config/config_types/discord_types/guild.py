@@ -113,6 +113,7 @@ class Guild(BaseType):
         Return id of guild
 
         :Basic usage:
+
         >>> my_guild = Guild(client) #doctest: +SKIP
         >>> my_guild.set(valid_id_or_guild) #doctest: +SKIP
         >>> my_guild.to_save() #doctest: +SKIP

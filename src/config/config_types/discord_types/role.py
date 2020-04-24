@@ -11,9 +11,9 @@ if typing.TYPE_CHECKING:
 class Role(BaseType):
     #: :class:`BotBase`: Client instance for checking
     client: BotBase
-    #: :class:`typing.Optional` [:class:`int`]: Current channel id
+    #: :class:`typing.Optional` [:class:`int`]: Current role id
     value: int
-    #: :class:`typing.Optional` [:class:`discord.Role`]: Current guild instance
+    #: :class:`typing.Optional` [:class:`discord.Role`]: Current role instance
     role_instance: typing.Optional[discord.Role]
 
     def __init__(self, client: BotBase) -> None:
@@ -47,15 +47,15 @@ class Role(BaseType):
 
         :param value: Value to test
         :type value: Union[int, discord.Role]
-        :return: True if guild exists
+        :return: True if role exists
         """
         id = value
-        if isinstance(value, discord.TextChannel):
+        if isinstance(value, discord.Role):
             id = value.id
         if not self.client.is_ready():
-            self.client.warning(f"No check for channel {value} because client is not initialized!")
+            self.client.warning(f"No check for role {value} because client is not initialized!")
             return True
-        if self.client.get_channel(id):
+        if self.client.get_role(id):
             return True
         return True
 
@@ -91,7 +91,7 @@ class Role(BaseType):
         >>> my_role = Role(client) #doctest: +SKIP
         >>> my_role.set(valid_id_or_role) #doctest: +SKIP
         >>> my_role.get() #doctest: +SKIP
-        <discord.guild.Guild at 0x...>
+        <discord.role.Role at 0x...>
 
         If client is not connected:
         >>> my_role = Role(client) #doctest: +SKIP
@@ -100,17 +100,18 @@ class Role(BaseType):
         23411424132412
 
         :return: Role object if client is connected, else id
-        :rtype: Union[int, discord.Guild]
+        :rtype: Union[int, discord.Role]
         """
-        if self.channel_instance is None:
+        if self.role_instance is None:
             self._update()
-        return self.channel_instance or self.value
+        return self.role_instance or self.value
 
     def to_save(self) -> int:
         """
-        Return id of channel
+        Return id of role
 
         :Basic usage:
+
         >>> my_role = Role(client) #doctest: +SKIP
         >>> my_role.set(valid_id_or_role) #doctest: +SKIP
         >>> my_role.to_save() #doctest: +SKIP
@@ -144,9 +145,9 @@ class Role(BaseType):
 
     def _update(self):
         if self.client.is_ready() and self.role_instance is None:
-            self.channel_instance = self.client.get_role(self.value)
+            self.role_instance = self.client.get_role(self.value)
         else:
-            self.channel_instance = None
+            self.role_instance = None
 
     def __repr__(self):
-        return f'<config_types.discord_types.Channel object with value {self.value}>'
+        return f'<config_types.discord_types.User object with value {self.value}>'
