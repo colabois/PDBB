@@ -14,9 +14,9 @@ class Color(BaseType):
         :Basic usage:
 
         >>> Color()
-        <config_types.Color object with value None>
+        <config_types.Color object with value 0>
         """
-        self.value = None
+        self.value = 0
 
     def check_value(self, value: int) -> bool:
         """
@@ -89,6 +89,7 @@ class Color(BaseType):
 
         >>> my_color = Color()
         >>> my_color.to_save()
+        0
         >>> my_color.set(34)
         >>> my_color.to_save()
         34
