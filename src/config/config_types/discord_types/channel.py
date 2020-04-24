@@ -36,7 +36,8 @@ class Channel(BaseType):
         self._update()
 
     def get(self):
-        self._update()
+        if self.channel_instance is None:
+            self._update()
         return self.channel_instance or self.value
 
     def to_save(self):

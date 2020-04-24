@@ -207,10 +207,10 @@ class BotBase(discord.Client):
         self.error(f"Error in {event_method}: \n{exc}")
 
     # Logging
-    def info(self, *args, **kwargs):
+    def info(self, info, *args, **kwargs):
         if self.log:
-            self.log.info(*args, **kwargs)
-        self.dispatch("log_info", *args, **kwargs)
+            self.log.info(info, *args, **kwargs)
+        self.dispatch("log_info", info, *args, **kwargs)
 
     def error(self, e, *args, **kwargs):
         if self.log:
