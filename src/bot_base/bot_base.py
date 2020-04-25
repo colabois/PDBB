@@ -38,21 +38,11 @@ class BotBase(discord.Client):
         # Setup config
         self.config = Config(path=os.path.join(data_folder, "config.toml"))
         self.config.register("modules", factory(config_types.List, factory(config_types.Str)))
-        self.config.register("prefix", factory(config_types.Str))
-        self.config.register("admin_roles", factory(config_types.List, factory(config_types.discord_types.Role, self)))
-        self.config.register("admin_users", factory(config_types.List, factory(config_types.discord_types.User, self)))
-        self.config.register("main_guild", factory(config_types.discord_types.Guild, self))
-        self.config.register("locale", factory(config_types.Str))
         self.config.register("data_folder", factory(config_types.Str))
         self.config.register("modules_folder", factory(config_types.Str))
 
         self.config.set({
             "modules": [],
-            "prefix": "%",
-            "admin_roles": [],
-            "admin_users": [],
-            "main_guild": None,
-            "locale": "fr_FR.UTF8",
             "data_folder": data_folder,
             "modules_folder": modules_folder,
         })
