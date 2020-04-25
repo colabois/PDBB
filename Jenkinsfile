@@ -8,7 +8,7 @@ pipeline {
                 }
             }
             steps {
-                sh "pip install pipenv"
+                sh "pip install --user pipenv"
                 sh "pipenv sync"
                 sh 'pipenv run pytest -p no:warnings --junit-xml test-reports/results.xml' 
             }
