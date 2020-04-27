@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "56274993c51b422f6d178e8a21bbf669b8b508facb513d6c63f3373ebf707863"
+            "sha256": "267e2db73eae9033f8531715235a968fe4ddd2ca4f09ccc266d5f6da869acb23"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -485,6 +485,14 @@
                 "sha256:88206b0eb87e6d677d424843ac5209e3fb9d0190d0ee169599165ec25e9d9115"
             ],
             "version": "==1.25.9"
+        },
+        "watchgod": {
+            "hashes": [
+                "sha256:59700dab7445aa8e6067a5b94f37bae90fc367554549b1ed2e9d0f4f38a90d2a",
+                "sha256:e9cca0ab9c63f17fc85df9fd8bd18156ff00aff04ebe5976cee473f4968c6858"
+            ],
+            "index": "pypi",
+            "version": "==0.6"
         },
         "wcwidth": {
             "hashes": [

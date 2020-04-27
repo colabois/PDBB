@@ -22,10 +22,10 @@ def setup_logging(default_path='data/log_config.json', default_level=logging.INF
         logging.basicConfig(level=default_level)
 
 
-setup_logging()
-
-if __name__ == "__main__":
-    client = BotBase(max_messages=500000, data_folder="datas", modules_folder=os.environ.get("LOCAL_MODULES", "modules"))
+def main():
+    setup_logging()
+    client = BotBase(max_messages=500000, data_folder="datas",
+                     modules_folder=os.environ.get("LOCAL_MODULES", "modules"))
 
     async def start_bot():
         await client.start(os.environ.get("DISCORD_TOKEN"))
@@ -33,3 +33,7 @@ if __name__ == "__main__":
     loop = asyncio.get_event_loop()
     loop.create_task(start_bot())
     loop.run_forever()
+
+
+if __name__ == "__main__":
+    main()

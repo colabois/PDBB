@@ -45,7 +45,7 @@ class BotBase(discord.Client):
             "modules": [],
             "data_folder": data_folder,
             "modules_folder": modules_folder,
-        })
+        }, no_save=True)
 
         self.config.load()
 

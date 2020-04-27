@@ -15,7 +15,7 @@ class Config:
     #: :class:`typing.Type` [:class:`BaseType`]: Current fields
     fields: typing.Dict[str, BaseType]
 
-    def __init__(self, path: str) -> None:
+    def __init__(self, path: typing.Optional[str]) -> None:
         """
         Create config object
 
@@ -45,7 +45,7 @@ class Config:
             name: type_()
         })
 
-    def set(self, values: dict) -> None:
+    def set(self, values: dict, no_save: bool = False) -> None:
         """
         Set all parameters with values (and override old ones)
 
@@ -54,17 +54,21 @@ class Config:
         >>> from config.config_types import factory, Int
         >>> config = Config("doctest_config.toml")
         >>> config.register("my_parameter", factory(Int))
-        >>> config.set({"my_parameter": 3})
+        >>> config.set({"my_parameter": 3}) #doctest: +SKIP
+        >>> config.set({"my_parameter": 4}, no_save=True)
 
         :type values: dict
         :param values: dict of parameters
         """
         for k, v in values.items():
             try:
+
                 self.fields[k].set(v)
             except KeyError:
                 # TODO: trouver un moyen de warn
                 pass
+        if not no_save:
+            self.save()
 
     def save(self) -> None:
         """
@@ -75,12 +79,13 @@ class Config:
         >>> from config.config_types import factory, Int
         >>> config = Config("doctest_config.toml")
         >>> config.register("my_parameter", factory(Int))
-        >>> config.set({"my_parameter": 3})
+        >>> config.set({"my_parameter": 3}) #doctest: +SKIP
         >>> config.save() #doctest: +SKIP
         """
-        os.makedirs(os.path.dirname(self.path), exist_ok=True)
-        with open(self.path, 'w') as file:
-            toml.dump({k: v.to_save() for k, v in self.fields.items()}, file)
+        if self.path is not None:
+            os.makedirs(os.path.dirname(self.path), exist_ok=True)
+            with open(self.path, 'w') as file:
+                toml.dump({k: v.to_save() for k, v in self.fields.items()}, file)
 
     def load(self) -> None:
         """
@@ -91,7 +96,7 @@ class Config:
         >>> from config.config_types import factory, Int
         >>> config = Config("doctest_config.toml")
         >>> config.register("my_parameter", factory(Int))
-        >>> config.set({"my_parameter": 3})
+        >>> config.set({"my_parameter": 3}) #doctest: +SKIP
         >>> config.save() #doctest: +SKIP
         >>> new_config = Config("doctest_config.toml")
         >>> new_config.register("my_parameter", factory(Int))
@@ -101,12 +106,13 @@ class Config:
 
         :return: None
         """
-        try:
-            with open(self.path, 'r') as file:
-                self.set(toml.load(file))
-        except FileNotFoundError:
-            pass
-        self.save()
+        if self.path is not None:
+            try:
+                with open(self.path, 'r') as file:
+                    self.set(toml.load(file))
+            except FileNotFoundError:
+                pass
+            self.save()
 
     def __getitem__(self, item: str) -> typing.Any:
         """
@@ -119,8 +125,12 @@ class Config:
         >>> from config.config_types import factory, Int
         >>> config = Config("doctest_config.toml")
         >>> config.register("my_parameter", factory(Int))
-        >>> config.set({"my_parameter": 3})
-        >>> print(config["my_parameter"])
+        >>> config.set({"my_parameter": 3}) #doctest: +SKIP
+        >>> print(config["my_parameter"]) #doctest: +SKIP
         3
         """
+        self.load()
         return self.fields[item].get()
+
+    def __str__(self):
+        return f"<Config with fields <{', '.join(f'{k} = {v}' for k, v in self.fields.items())}>>"

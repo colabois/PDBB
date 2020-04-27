@@ -12,6 +12,7 @@ toml = "*"
 pytest = "*"
 sphinx = "*"
 sphinx-rtd-theme = "*"
+watchgod = "*"
 
 [requires]
 python_version = "3.8"
