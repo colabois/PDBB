@@ -48,7 +48,7 @@ pipeline {
 
         stage('Deploy Documentation') {
             environment {
-                TAG_NAME = "${TAG_NAME}"
+                TAG_NAME = """${TAG_NAME ?: ""}"""
             }
             when {
                 anyOf {
@@ -60,13 +60,13 @@ pipeline {
             steps {
                 sh 'rm -f rsync.log'
                 sshagent(credentials: ['1cf72f47-b70c-4f90-a958-020956099d19']) {
-                    sh 'echo ${TAG_NAME:-GIT_BRANCH#*/}'
-                    sh 'echo ${DEPLOY_HOST}:${DEPLOY_PATH}${TAG_NAME:-GIT_BRANCH#*/}/ >> debug.log'
-                    sh 'ssh -o StrictHostKeyChecking=no -o BatchMode=yes ${DEPLOY_HOST} mkdir -p ${DEPLOY_PATH}${TAG_NAME:-GIT_BRANCH#*/}/'
+                    sh 'echo ${TAG_NAME:-${GIT_BRANCH#*/}}'
+                    sh 'echo ${DEPLOY_HOST}:${DEPLOY_PATH}${TAG_NAME:-${GIT_BRANCH#*/}}/ >> debug.log'
+                    sh 'ssh -o StrictHostKeyChecking=no -o BatchMode=yes ${DEPLOY_HOST} mkdir -p ${DEPLOY_PATH}${TAG_NAME:-${GIT_BRANCH#*/}}/'
                     sh '''rsync -aze 'ssh -o StrictHostKeyChecking=no -o BatchMode=yes' \
                     --log-file=rsync.log \
                     --delete \
-                    doc/build/html/ ${DEPLOY_HOST}:${DEPLOY_PATH}${TAG_NAME:-GIT_BRANCH#*/}/'''
+                    doc/build/html/ ${DEPLOY_HOST}:${DEPLOY_PATH}${TAG_NAME:-${GIT_BRANCH#*/}}/'''
                 }
             }
             post {
