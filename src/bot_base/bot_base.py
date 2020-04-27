@@ -15,7 +15,7 @@ from config import Config, config_types
 from config.config_types import factory
 import errors
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 MINIMAL_INFOS = ["version", "bot_version"]
 
 
