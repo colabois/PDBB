@@ -9,7 +9,7 @@ import traceback
 
 import discord
 import toml
-from packaging.specifiers import SpecifierSet
+from packaging.specifiers import SpecifierSet, InvalidSpecifier
 
 from config import Config, config_types
 from config.config_types import factory
@@ -100,9 +100,16 @@ class BotBase(discord.Client):
             for dep, version in infos["dependencies"].items():
                 if not dep in self.modules.keys():
                     self.load_module(dep)
-                dep_version_specifier = SpecifierSet(version)
+                dep_version_specifier = None
+                try:
+                    dep_version_specifier = SpecifierSet(version)
+                except InvalidSpecifier:
+                    self.warning(f"Attempt to load incompatible module {module}: dependance version is invalid ({version} for {dep})")
+                    raise errors.IncompatibleModuleError(f"Module {module} is not compatible with your current "
+                                                         f"installation (version specifier {version} for {dep} is "
+                                                         f"invalid.")
                 if self.modules[dep]["infos"]["version"] not in dep_version_specifier:
-                    self.warning(f"Attempt to load incompatible module {module}: (require {dep} ({version}) "
+                    self.warning(f"Attempt to load incompatible module {module}: require {dep} ({version}) "
                                  f"and you have {dep} ({self.modules[dep]['infos']['version']})")
                     raise errors.IncompatibleModuleError(f"Module {module} is not compatible with your current install "
                                                          f"(require {dep} ({version}) and you have {dep} "
@@ -193,8 +200,8 @@ class BotBase(discord.Client):
         for module in self.modules.values():
             module["dispatch"](event, *args, **kwargs)
 
-    async def on_error(self, event_method, exc, *args, **kwargs):
-        self.error(f"Error in {event_method}: \n{exc}")
+    async def on_error(self, event_method, *args, **kwargs):
+        self.error(f"Error in {event_method}: \n{traceback.format_exc()}")
 
     # Logging
     def info(self, info, *args, **kwargs):
