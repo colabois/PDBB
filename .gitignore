@@ -77,3 +77,4 @@ data/*
 /src/datas/
 /src/doctest_config.toml
 /datas
+requirements.txt

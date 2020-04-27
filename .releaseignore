@@ -1,0 +1,9 @@
+.git
+.gitignore
+.releaseignore
+Dockerfile
+Jenkinsfile
+Pipfile
+Pipfile.lock
+doc
+scripts
