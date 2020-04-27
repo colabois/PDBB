@@ -76,3 +76,4 @@ data/*
 /doc/build
 /src/datas/
 /src/doctest_config.toml
+/datas
