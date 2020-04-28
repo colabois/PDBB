@@ -10,6 +10,7 @@ pipeline {
         PROJECT_NAME = 'bot-base'
         DEPLOY_DOC_PATH = "www/docs/${env.PROJECT_NAME}/"
         DEPLOY_REL_PATH = "www/releases/${env.PROJECT_NAME}/"
+        RELEASE_ROOT = "src"
         TAG_NAME = """${TAG_NAME ?: ""}"""
         ARTIFACTS = "${WORKSPACE}/.artifacts"
     }
@@ -19,9 +20,9 @@ pipeline {
                 sh 'git clean -fxd'
                 sh 'mkdir -p ${ARTIFACTS}/build'
                 sh 'mkdir -p /tmp/build'
-                sh 'pipenv lock -r | tee requirements.txt'
+                sh 'pipenv lock -r | tee ${RELEASE_ROOT}/requirements.txt'
                 sh 'echo .artifacts >> .releaseignore'
-                sh 'rsync -avr --exclude-from=.releaseignore ./ /tmp/build'
+                sh 'rsync -avr --exclude-from=.releaseignore ${RELEASE_ROOT}/ /tmp/build'
                 sh 'tar -C /tmp/build -cvzf ${ARTIFACTS}/build/${TAG_NAME:-${GIT_BRANCH#*/}}.tar.gz --owner=0 --group=0 .'
                 sh 'cd /tmp/build && zip ${ARTIFACTS}/build/${TAG_NAME:-${GIT_BRANCH#*/}}.zip -r .'            
             }
