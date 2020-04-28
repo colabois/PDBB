@@ -15,7 +15,7 @@ from config import Config, config_types
 from config.config_types import factory
 import errors
 
-__version__ = "0.1.1"
+__version__ = "0.2.0"
 MINIMAL_INFOS = ["version", "bot_version"]
 
 
@@ -36,6 +36,8 @@ class BotBase(discord.Client):
         self.modules = {}
 
         # Setup config
+        self.configs = {}
+
         self.config = Config(path=os.path.join(data_folder, "config.toml"))
         self.config.register("modules", factory(config_types.List, factory(config_types.Str)))
         self.config.register("data_folder", factory(config_types.Str))
@@ -104,7 +106,8 @@ class BotBase(discord.Client):
                 try:
                     dep_version_specifier = SpecifierSet(version)
                 except InvalidSpecifier:
-                    self.warning(f"Attempt to load incompatible module {module}: dependance version is invalid ({version} for {dep})")
+                    self.warning(
+                        f"Attempt to load incompatible module {module}: dependance version is invalid ({version} for {dep})")
                     raise errors.IncompatibleModuleError(f"Module {module} is not compatible with your current "
                                                          f"installation (version specifier {version} for {dep} is "
                                                          f"invalid.")
@@ -218,3 +221,10 @@ class BotBase(discord.Client):
         if self.log:
             self.log.warning(warning, *args, **kwargs)
         self.dispatch("log_warning", warning, *args, **kwargs)
+
+    # Configuration
+
+    def get_config(self, path):
+        self.configs.update({
+            path: self.configs.get(path) or Config(path=path)
+        })
