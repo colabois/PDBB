@@ -18,7 +18,7 @@ Introduction
 
 "Python Discord Bot" is a fully modular, self-hostable discord bot.
 
-Its goal is to provide a solid and minimal base (only error handling, help, modules and configuration management) and to provide a large amount of modules.
+Its goal is to provide a solid and minimal base (only error handling, modules and configuration management) and to provide a large amount of modules.
 
 In addition to being fully modular, this bot is meant to be a single server, in order to allow advanced configuration and simple management of private messages (many modules are games that need to use private messages, and it wouldn't be nice to add a choice of server for each action).
 

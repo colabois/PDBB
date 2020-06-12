@@ -49,7 +49,6 @@ class Str(BaseType):
 
         :raise ValueError: if attempt to set invalid value
         :param str value: Value to set
-        :return: None
         """
         if not self.check_value(value):
             raise ValueError("Attempt to set incompatible value.")

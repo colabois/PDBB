@@ -1,67 +1,49 @@
 Introduction
 ============
 
-Creating a module is relatively simple: just create a python package (a folder that contains a ``__init__.py`` file) in
-the modules folder, insert a ``version.json`` file (which will allow you to add dependencies and general information for
-your module) and have a MainClass class in the ``__init__.py`` file.
+A PDB module is a simple python package, ie. a folder which contains a ``__init__.py`` file. A valid module must have a
+file named ``infos.toml`` which contains some informations about the module, and ``__init__.py__`` must have one thing:
+a variable named ``__main_class__``, which point to a class, and this class must have a method named ``__dispatch__``.
 
-So the next step is to create the :py:class:`MainClass`, which inherits from :py:class:`BaseClassPython`, here is a minimal example:
+Lets look a simple example:
+
+.. code-block::
+
+    └─── modules
+      └─── my_module
+        ├── infos.toml
+        └── __init__.py
+
+Now examine ``infos.toml`` file:
+
+.. code-block:: toml
+    :linenos:
+
+    version = "0.1.0"
+    bot_version = "~=0.2.0"
+
+This file is minimal, but necessary to describe your module, and fields are very clear:
+
+- ``version`` is version of module
+- ``bot_version`` is the required version of bot (the ``~=`` is to say version ``0.2.0`` or compatible)
+
+You can refer to ``version`` section for more informations about ``version`` and ``bot_version`` fields, and
+``infos file`` section for other fields of this file.
+
+Now look at ``__init__.py``
 
 .. code-block:: python
     :linenos:
 
-    class MainClass:
-        name = "MyFirstModule"
-        help = {
-            "description": "My first module",
-            "commands": {
-            }
-        }
+    class MyModule:
+        def __dispatch__(self, event_name, *args, **kwargs):
+            pass
 
-As you can see it's very simple, from now on you can start the bot and load the module.
-
-Currently it does nothing, so let's add a ``say`` command:
-
-.. code-block:: python
-    :linenos:
-    :emphasize-lines: 6,10,11
-
-    class MainClass:
-        name = "MyFirstModule"
-        help = {
-            "description": "My first module",
-            "commands": {
-                "{prefix}{command} say <message>": "Bot send message <message>",
-            }
-        }
-
-        async def com_say(self, message, args, kwargs):
-            await message.channel.send(args[0])
-
-You can now reload the module and test the command ``!myfirstmodule say "Hello world"``.
-
-You can see that without the quotation marks the returned message contains only the first word. Indeed each message is
-processed to extract the module (here ``module``), the command (here ``say``) and the arguments. This is how the
-arguments are processed:
+    __main_class__ = MyModule
 
 
-``!mymodule say "Hello world" "Goodbye world"`` - ``args = ["Hello world", "Goodbye world"] kwargs=[]``
+As you can see a module is very simple.
 
-``!mymodule say --long-option -an -s "s value"`` - ``args = [] kwargs = [("long-option", None), ("a", None), ("n", None), ("s", "s value")]``
-
-``!mymodule say -s "s value" "value"`` - ``args = ["value"] kwargs = [("s", "s value")]``
-
-So let's add an ``-m`` option that adds the mention of the author to the message:
-
-
-.. code-block:: python
-    :linenos:
-    :lineno-start: 10
-    :emphasize-lines: 2,3,4
-
-        async def com_say(self, message, args, kwargs):
-            if 'm' in [k for k, v in kwargs]:
-                await message.channel.send(message.author.mention + args[0])
-                return
-            await message.channel.send(args[0])
-
+``__dispatch__`` method will be called for each event, these events are listed in section ``events``. As you can see,
+there is a lot of event types, and handle them manually will be very long, so there is a module, who parse them, and
+call ``on_{event}`` method, and an other one who parse message to handle commands. In next part we learn to use them.

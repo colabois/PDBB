@@ -6,3 +6,4 @@ Module creation
     :caption: Contents:
 
     intro
+    basic_module

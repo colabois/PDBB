@@ -12,3 +12,7 @@ class ModuleNotFoundError(ModuleException):
 
 class IncompatibleModuleError(ModuleException):
     pass
+
+
+class MissingDependency(ModuleException):
+    pass

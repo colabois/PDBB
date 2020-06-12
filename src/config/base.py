@@ -103,8 +103,6 @@ class Config:
         >>> new_config.load() #doctest: +SKIP
         >>> new_config["my_parameter"] #doctest: +SKIP
         3
-
-        :return: None
         """
         if self.path is not None:
             try:

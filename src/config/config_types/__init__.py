@@ -23,7 +23,7 @@ class Meta(type):
 
 def factory(type: Type[BaseType], *args, **kwargs):
     """
-    Create a new test ``type`` with parameters args and kwargs
+    Create a new ``type`` with parameters args and kwargs
 
     :Basic usage:
 

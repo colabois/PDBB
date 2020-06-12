@@ -24,8 +24,8 @@ def setup_logging(default_path='data/log_config.json', default_level=logging.INF
 
 def main():
     setup_logging()
-    client = BotBase(max_messages=500000, data_folder="datas",
-                     modules_folder=os.environ.get("LOCAL_MODULES", "modules"))
+    print(os.environ.get("LOCAL_MODULES", "modules"))
+    client = BotBase(max_messages=500000, data_folder="datas")
 
     async def start_bot():
         await client.start(os.environ.get("DISCORD_TOKEN"))
