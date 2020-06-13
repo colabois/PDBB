@@ -7,12 +7,16 @@ pipeline {
     environment {
         SPHINXOPTS = '-w sphinx-build.log'
         DEPLOY_HOST = 'docs@moriya.zapto.org'
+        WEBSITE = 'https://moriya.zapto.org'
         PROJECT_NAME = 'bot-base'
-        DEPLOY_DOC_PATH = "www/docs/${env.PROJECT_NAME}/"
-        DEPLOY_REL_PATH = "www/releases/${env.PROJECT_NAME}/"
+        DOC_PATH = "/docs/${env.PROJECT_NAME}/"
+        REL_PATH = "/releases/${env.PROJECT_NAME}/"
+        DEPLOY_DOC_PATH = "www${env.DOC_PATH}"
+        DEPLOY_REL_PATH = "www${env.REL_PATH}"
         RELEASE_ROOT = "src"
         TAG_NAME = """${TAG_NAME ?: ""}"""
         ARTIFACTS = "${WORKSPACE}/.artifacts"
+        WEBHOOK_URL = credentials('webhook_bot-base')
     }
     stages {
         stage('Generate release archives') {
@@ -123,6 +127,7 @@ pipeline {
     post {
         always {
             sh 'git clean -fxd'
+            discordSend description: env.BRANCH_NAME == 'stable' || env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'jenkins_tests' ? "La branche ${env.BRANCH_NAME} a fini d'exécuter :\n - [Documentation](${env.WEBSITE + env.DOC_PATH + env.BRANCH_NAME + '/'}) \n - [Release](${env.WEBSITE + env.REL_PATH + env.BRANCH_NAME + '/'})\n *Note : Ces liens mènent vers la dernière Documentation / Release produite.*" : env.TAG_NAME ? "Le tag ${env.TAG_NAME} a fini d'exécuter :\n - [Documentation](${env.WEBSITE + env.DOC_PATH + env.TAG_NAME + '/'}) \n - [Release](${env.WEBSITE + env.REL_PATH + env.TAG_NAME + '/'})" : '*pour plus de détail, voir lien au dessus.*', footer: currentBuild.durationString.replace(" and counting",""), link: env.RUN_DISPLAY_URL, result: currentBuild.currentResult, title:"[${currentBuild.currentResult}] ${currentBuild.fullDisplayName}", webhookURL: env.WEBHOOK_URL
         }
     }
 }
