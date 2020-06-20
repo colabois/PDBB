@@ -1,34 +1,28 @@
 from __future__ import annotations
 
-import importlib
-import inspect
+import asyncio
 import logging
 import os
-import sys
 import traceback
 
 import discord
-import toml
-from packaging.specifiers import SpecifierSet, InvalidSpecifier
 
 from bot_base.modules import ModuleManager
 from config import Config, config_types
 from config.config_types import factory
-import errors
 
 __version__ = "0.2.0"
 
 
-class BotBase(discord.Client):
+class BotBase():
     log = None
 
-    def __init__(self, data_folder: str = "data", modules_folder: str = "modules", *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, data_folder: str = "datas", modules_folder: str = "modules", loop = asyncio.get_event_loop()):
         # Create folders
         os.makedirs(modules_folder, exist_ok=True)
         os.makedirs(data_folder, exist_ok=True)
-        # Add module folder to search path
-        # TODO: Vérifier que ca ne casse rien
+        self.backends = []
+
         # Setup logging
         self.log = logging.getLogger('bot_base')
 
@@ -46,14 +40,19 @@ class BotBase(discord.Client):
 
         self.modules = ModuleManager(self)
 
+        self.loop = loop
+        self.modules.load_modules()
+
+    def is_ready(self):
+        return False
+
     async def on_ready(self):
         self.info("Bot ready.")
-        self.modules.load_modules()
 
     def dispatch(self, event, *args, **kwargs):
         """Dispatch event"""
-        super().dispatch(event, *args, **kwargs)
         for module in self.modules:
+            print(f"Dispatched: {event}\n{args}{kwargs}")
             module.dispatch(event, *args, **kwargs)
 
     async def on_error(self, event_method, *args, **kwargs):
@@ -66,6 +65,7 @@ class BotBase(discord.Client):
         self.dispatch("log_info", info, *args, **kwargs)
 
     def error(self, e, *args, **kwargs):
+        print(e)
         if self.log:
             self.log.error(e, *args, **kwargs)
         self.dispatch("log_error", e, *args, **kwargs)
@@ -84,3 +84,12 @@ class BotBase(discord.Client):
             path: config
         })
         return config
+
+    def register(self, backend):
+        self.backends.append(backend)
+        backend.set_dispatch_handler(self.dispatch)
+
+    def run(self):
+        for back in self.backends:
+            asyncio.ensure_future(back.run())
+        self.loop.run_forever()

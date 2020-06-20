@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 packaging = "*"
 toml = "*"
+websockets = "*"
 "discord.py" = {version = "*",extras = ["voice",]}
 
 [dev-packages]

@@ -4,10 +4,12 @@ import json
 import logging
 import os
 
+from backends.IRC.irc import IRC
+from backends.discord.discord import Discord
 from bot_base.bot_base import BotBase
 
 
-def setup_logging(default_path='data/log_config.json', default_level=logging.INFO, env_key='BOT_BASE_LOG_CONFIG'):
+def setup_logging(default_path='datas/log_config.json', default_level=logging.INFO, env_key='BOT_BASE_LOG_CONFIG'):
     """Setup logging configuration
     """
     path = default_path
@@ -24,15 +26,10 @@ def setup_logging(default_path='data/log_config.json', default_level=logging.INF
 
 def main():
     setup_logging()
-    print(os.environ.get("LOCAL_MODULES", "modules"))
-    client = BotBase(max_messages=500000, data_folder="datas")
-
-    async def start_bot():
-        await client.start(os.environ.get("DISCORD_TOKEN"))
-
-    loop = asyncio.get_event_loop()
-    loop.create_task(start_bot())
-    loop.run_forever()
+    client = BotBase()
+    client.register(Discord("NDcwNzI4NjAzMDEzNzQyNjAy.XuSCkg.8A6DEqpDj9pghFDefp9PEHlASnc"))
+    client.register(IRC("192.168.0.1", 6667, "toto"))
+    client.run()
 
 
 if __name__ == "__main__":
