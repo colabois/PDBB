@@ -1,20 +1,16 @@
 from __future__ import annotations
 
-import importlib
-import inspect
+import asyncio
 import logging
 import os
-import sys
 import traceback
 
 import discord
-import toml
-from packaging.specifiers import SpecifierSet, InvalidSpecifier
+from aiohttp import web
 
 from bot_base.modules import ModuleManager
 from config import Config, config_types
 from config.config_types import factory
-import errors
 
 __version__ = "0.2.0"
 
@@ -37,14 +33,19 @@ class BotBase(discord.Client):
 
         self.config = Config(path=os.path.join(data_folder, "config.toml"))
         self.config.register("data_folder", factory(config_types.Str))
+        self.config.register("port", factory(config_types.Int))
 
         self.config.set({
             "data_folder": data_folder,
+            "port": 8080,
         }, no_save=True)
 
         self.config.load()
 
         self.modules = ModuleManager(self)
+
+        self.webserver = web.Application()
+        self.loop.create_task(web._run_app(self.webserver, port=self.config["port"]), name="webserver")
 
     async def on_ready(self):
         self.info("Bot ready.")

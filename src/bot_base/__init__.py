@@ -1,1 +1,1 @@
-import bot_base
+from .bot_base import *
