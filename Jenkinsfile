@@ -6,13 +6,10 @@ pipeline {
     }
     environment {
         SPHINXOPTS = '-w sphinx-build.log'
-        DEPLOY_HOST = 'docs@moriya.zapto.org'
-        WEBSITE = 'https://moriya.zapto.org'
-        PROJECT_NAME = 'bot-base'
-        DOC_PATH = "/docs/${env.PROJECT_NAME}/"
-        REL_PATH = "/releases/${env.PROJECT_NAME}/"
-        DEPLOY_DOC_PATH = "www${env.DOC_PATH}"
-        DEPLOY_REL_PATH = "www${env.REL_PATH}"
+        DEPLOY_HOST = 'webroot@colabois.fr'
+        PROJECT_NAME = 'PDBB'
+        DEPLOY_DOC_PATH = "www/docs.pdba.colabois.fr/${env.PROJECT_NAME}/"
+        DEPLOY_REL_PATH = "www/releases.pdba.colabois.fr/${env.PROJECT_NAME}/"
         RELEASE_ROOT = "src"
         TAG_NAME = """${TAG_NAME ?: ""}"""
         ARTIFACTS = "${WORKSPACE}/.artifacts"
@@ -81,7 +78,7 @@ pipeline {
                 }
             }
             steps {
-                sshagent(credentials: ['docs_pk']) {
+                sshagent(credentials: ['pk_webroot']) {
                     sh 'echo ${TAG_NAME:-${GIT_BRANCH#*/}}'
                     sh 'echo ${DEPLOY_HOST}:${DEPLOY_DOC_PATH}${TAG_NAME:-${GIT_BRANCH#*/}}/'
                     sh 'ssh -o StrictHostKeyChecking=no -o BatchMode=yes ${DEPLOY_HOST} mkdir -p ${DEPLOY_DOC_PATH}${TAG_NAME:-${GIT_BRANCH#*/}}/'
@@ -107,7 +104,7 @@ pipeline {
                 }
             }
             steps {
-                sshagent(credentials: ['docs_pk']) {
+                sshagent(credentials: ['pk_webroot']) {
                     sh 'echo ${TAG_NAME:-${GIT_BRANCH#*/}}'
                     sh 'echo ${DEPLOY_HOST}:${DEPLOY_REL_PATH}${TAG_NAME:-${GIT_BRANCH#*/}}/'
                     sh 'ssh -o StrictHostKeyChecking=no -o BatchMode=yes ${DEPLOY_HOST} mkdir -p ${DEPLOY_REL_PATH}${TAG_NAME:-${GIT_BRANCH#*/}}/'
