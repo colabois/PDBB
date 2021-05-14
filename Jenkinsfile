@@ -6,13 +6,12 @@ pipeline {
     }
     environment {
         SPHINXOPTS = '-w sphinx-build.log'
-        DEPLOY_HOST = 'docs@moriya.zapto.org'
-        WEBSITE = 'https://moriya.zapto.org'
-        PROJECT_NAME = 'bot-base'
-        DOC_PATH = "/docs/${env.PROJECT_NAME}/"
-        REL_PATH = "/releases/${env.PROJECT_NAME}/"
-        DEPLOY_DOC_PATH = "www${env.DOC_PATH}"
-        DEPLOY_REL_PATH = "www${env.REL_PATH}"
+        DEPLOY_HOST = 'webroot@colabois.fr'
+        PROJECT_NAME = 'PDBB'
+        DOC_WEBSITE = 'https://docs.pdba.colabois.fr/'
+        REL_WEBSITE = 'https://releases.pdba.colabois.fr/'
+        DEPLOY_DOC_PATH = "www/docs.pdba.colabois.fr/${env.PROJECT_NAME}/"
+        DEPLOY_REL_PATH = "www/releases.pdba.colabois.fr/${env.PROJECT_NAME}/"
         RELEASE_ROOT = "src"
         TAG_NAME = """${TAG_NAME ?: ""}"""
         ARTIFACTS = "${WORKSPACE}/.artifacts"
@@ -81,7 +80,7 @@ pipeline {
                 }
             }
             steps {
-                sshagent(credentials: ['docs_pk']) {
+                sshagent(credentials: ['pk_webroot']) {
                     sh 'echo ${TAG_NAME:-${GIT_BRANCH#*/}}'
                     sh 'echo ${DEPLOY_HOST}:${DEPLOY_DOC_PATH}${TAG_NAME:-${GIT_BRANCH#*/}}/'
                     sh 'ssh -o StrictHostKeyChecking=no -o BatchMode=yes ${DEPLOY_HOST} mkdir -p ${DEPLOY_DOC_PATH}${TAG_NAME:-${GIT_BRANCH#*/}}/'
@@ -107,7 +106,7 @@ pipeline {
                 }
             }
             steps {
-                sshagent(credentials: ['docs_pk']) {
+                sshagent(credentials: ['pk_webroot']) {
                     sh 'echo ${TAG_NAME:-${GIT_BRANCH#*/}}'
                     sh 'echo ${DEPLOY_HOST}:${DEPLOY_REL_PATH}${TAG_NAME:-${GIT_BRANCH#*/}}/'
                     sh 'ssh -o StrictHostKeyChecking=no -o BatchMode=yes ${DEPLOY_HOST} mkdir -p ${DEPLOY_REL_PATH}${TAG_NAME:-${GIT_BRANCH#*/}}/'
@@ -127,7 +126,7 @@ pipeline {
     post {
         always {
             sh 'git clean -fxd'
-            discordSend description: env.TAG_NAME ? "Le tag ${env.TAG_NAME} a fini d'exécuter :\n - [Documentation](${env.WEBSITE + env.DOC_PATH + env.TAG_NAME + '/'}) \n - [Release](${env.WEBSITE + env.REL_PATH + env.TAG_NAME + '/'})" : env.BRANCH_NAME == 'stable' || env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'jenkins_tests' ? "La branche ${env.BRANCH_NAME} a fini d'exécuter :\n - [Documentation](${env.WEBSITE + env.DOC_PATH + env.BRANCH_NAME + '/'}) \n - [Release](${env.WEBSITE + env.REL_PATH + env.BRANCH_NAME + '/'})\n *Note : Ces liens mènent vers la dernière Documentation / Release produite.*" : '*pour plus de détail, voir lien au dessus.*', footer: currentBuild.durationString.replace(" and counting",""), link: env.RUN_DISPLAY_URL, result: currentBuild.currentResult, title:"[${currentBuild.currentResult}] ${currentBuild.fullDisplayName}", webhookURL: env.WEBHOOK_URL
+            discordSend description: env.TAG_NAME ? "Le tag ${env.TAG_NAME} a fini d'exécuter :\n - [Documentation](${env.DOC_WEBSITE + env.PROJECT_NAME + '/' + env.TAG_NAME + '/'}) \n - [Release](${env.REL_WEBSITE + env.PROJECT_NAME + '/' + env.TAG_NAME + '/'})" : env.BRANCH_NAME == 'stable' || env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'jenkins_tests' ? "La branche ${env.BRANCH_NAME} a fini d'exécuter :\n - [Documentation](${env.DOC_WEBSITE + env.PROJECT_NAME + '/' + env.BRANCH_NAME + '/'}) \n - [Release](${env.REL_WEBSITE + env.PROJECT_NAME + '/' + env.BRANCH_NAME + '/'})\n *Note : Ces liens mènent vers la dernière Documentation / Release produite.*" : '*pour plus de détail, voir lien au dessus.*', footer: currentBuild.durationString.replace(" and counting",""), link: env.RUN_DISPLAY_URL, result: currentBuild.currentResult, title:"[${currentBuild.currentResult}] ${currentBuild.fullDisplayName}", webhookURL: env.WEBHOOK_URL
         }
     }
 }
